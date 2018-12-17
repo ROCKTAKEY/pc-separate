@@ -142,5 +142,14 @@ if (pc-separate-current-system-p SYSTEM) return non-nil.
 variable have to be non-quoted."
   `(pc-separate-set (quote ,variable) ,alist))
 
+(defmacro pc-separate-cond (clauses)
+  "Set value of VARIABLE each system.
+each element of ALIST is (SYSTEM . VALUE), and VARIABLE is set to VALUE
+if (pc-separate-current-system-p SYSTEM) return non-nil."
+  (let ((c (gensym)))
+    `(let (,c)
+       (pc-separate-setq ,c ,clauses)
+       (eval (cons 'progn ,c)))))
+
 (provide 'pc-separate)
 ;;; pc-separate.el ends here
