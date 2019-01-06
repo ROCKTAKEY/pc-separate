@@ -21,3 +21,7 @@
      other =SYSTEM= doesn't accord current system.
 ** =pc-separate-setq (variable alist)=
    Same as pc-separate-set, but =VARIABLE= doesn't have to be quoted.
+** =pc-separate-cond (clauses)=
+   - Similar to =cond=, but use =SYSTEM= instead of =CANDICATE=.
+     If =SYSTEM= accords current system, evaluate =BODY=.
+   - Priority of =SYSTEM= is same as =pc-separate-set=.

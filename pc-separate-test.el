@@ -185,6 +185,43 @@
       ))
   )
 
+(ert-deftest pc-separate-cond ()
+  (let ((var nil)
+        (pc-separate-system-alist '(("windows-pc1" . WIN1)
+                                    ("mac-pc1" . MAC1)
+                                    ("windows-pc2" . 1)
+                                    ("windows-pc2" . 5)
+                                    ("windows-pc2" . win2))))
+    (flet ((system-name () "windows-pc2")
+           (abc (arg) (setq var arg)))
+      (should (equal (system-name) "windows-pc2"))
+
+      (should
+       (equal
+        (pc-separate-cond
+         (("windows-pc2"
+           1)
+          (5
+           3
+           2)
+          (win2
+           6
+           3)
+          (default
+            100)))
+        2))
+      
+      (pc-separate-cond
+       (("windows-pc2"
+         (abc 1))
+        (5
+         (abc 2))
+        (win2
+         (abc 3))))
+      (should (equal var 2))
+      )))
+
+
 ;; (cl-loop for x in '(1 2 3 4)
 ;;          collect x)
 

@@ -142,5 +142,15 @@ if (pc-separate-current-system-p SYSTEM) return non-nil.
 variable have to be non-quoted."
   `(pc-separate-set (quote ,variable) ,alist))
 
+;;;###autoload
+(defmacro pc-separate-cond (clauses)
+  "Eval BODY if SYSTEM accords current system.
+Each clause looks like (SYSTEM BODY...).BODY is evaluate
+if (pc-separate-current-system-p SYSTEM) return non-nil."
+  (let ((c (gensym)))
+    `(let (,c)
+       (pc-separate-setq ,c ',clauses)
+       (eval (cons 'progn ,c)))))
+
 (provide 'pc-separate)
 ;;; pc-separate.el ends here
