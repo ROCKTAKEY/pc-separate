@@ -199,23 +199,25 @@
       (should
        (equal
         (pc-separate-cond
-         '(("windows-pc2"
-            1)
-           (5
-            3
-            2)
-           (win2
-            6
-            3)))
+         (("windows-pc2"
+           1)
+          (5
+           3
+           2)
+          (win2
+           6
+           3)
+          (default
+            100)))
         2))
       
       (pc-separate-cond
-       '(("windows-pc2"
-          (abc 1))
-         (5
-          (abc 2))
-         (win2
-          (abc 3))))
+       (("windows-pc2"
+         (abc 1))
+        (5
+         (abc 2))
+        (win2
+         (abc 3))))
       (should (equal var 2))
       )))
 

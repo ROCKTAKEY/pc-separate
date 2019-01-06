@@ -149,7 +149,7 @@ Each clause looks like (SYSTEM BODY...).BODY is evaluate
 if (pc-separate-current-system-p SYSTEM) return non-nil."
   (let ((c (gensym)))
     `(let (,c)
-       (pc-separate-setq ,c ,clauses)
+       (pc-separate-setq ,c ',clauses)
        (eval (cons 'progn ,c)))))
 
 (provide 'pc-separate)
