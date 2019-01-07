@@ -1,4 +1,4 @@
-﻿;;; pc-separate.el --- separate setting by pc system
+﻿;;; pc-separate.el --- separate setting by pc system -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2018  ROCKTAKEY
 
@@ -26,7 +26,8 @@
 ;;   "pc-separate" provide function that help you to separate setting
 ;;   by system name given by "(system-name)". 
 ;; * Words
-;;   -  "system" means system-name or symbol which is defined in `pc-separate-system-alist'.
+;;   -  "system" means system-name or symbol which is defined in
+;;      `pc-separate-system-alist'.
 ;; * Variables
 ;; ** `pc-separate-system-alist'
 ;;    an associated list. Each element is cons cell,
@@ -35,13 +36,13 @@
 ;; * Macros
 ;; ** "`pc-separate-set' (variable alist)
 ;;   - Set value of "VARIABLE" depend on "system".
-;;   - Each element of "ALIST" is "(SYSTEM . VALUE)", and "VARIABLE" is set to "VALUE"
-;;     if "SYSTEM" accords current system.
-;;   - If there are some cons cells whose car accords current system, "number-or-symbol"
-;;     defined on upper stream in "pc-separate-system-alist" is used. System-name is the 
-;;     lowest priority.
-;;   - in the cons cell whose "SYSTEM" is "default", its "VALUE" is used only when any
-;;     other "SYSTEM" doesn't accord current system.
+;;   - Each element of "ALIST" is "(SYSTEM . VALUE)", and "VARIABLE" is
+;;     set to "VALUE" if "SYSTEM" accords current system.
+;;   - If there are some cons cells whose car accords current system,
+;;     "number-or-symbol" defined on upper stream in "pc-separate-system-alist"
+;;     is used. System-name is the lowest priority.
+;;   - in the cons cell whose "SYSTEM" is "default", its "VALUE" is used only
+;;     when any other "SYSTEM" doesn't accord current system.
 ;; ** `pc-separate-setq' (variable alist)
 ;;    Same as pc-separate-set, but "VARIABLE" doesn't have to be quoted.
 
@@ -70,7 +71,8 @@ And you can use the number instead of system-name on pc-separate."
            collect v))
 
 (defun pc-separate--assoc-or-eval (key alist)
-  "Same as assq, but if car of element of ALIST is list, eval it, and if t, treat the element as matched."
+  "Same as assq, but if car of element of ALIST is list, and eval it.
+If the value is t, treat the element as matched."
   (cl-loop
    with candicate = nil
    with x
@@ -90,7 +92,8 @@ And you can use the number instead of system-name on pc-separate."
   (let
       ((sys-name (if (stringp system)
                      system
-                   (car (rassq system pc-separate-system-alist))))) ;if no system-name, return nil
+                   ;; if no system-name, return nil
+                   (car (rassq system pc-separate-system-alist)))))
     (when sys-name
       sys-name)))
 
@@ -118,20 +121,24 @@ if (pc-separate-current-system-p SYSTEM) return non-nil."
          (system-list (gensym "system-list"))
          (s (gensym "s"))
          (alst alist))
-    (ignore (cl-loop for (x . y) in (eval alst))) ;throw error if ALIST is NOT both alist and symbol.    
+    ;; throw error if ALIST is NOT both alist and symbol.
+    (ignore (cl-loop for (x . y) in (eval alst))) 
     `(let (,--pc-separate--setq-candicate--)
        (setq ,--pc-separate--setq-candicate--
              (cl-loop
               with ,result = nil
-              with ,system-list = (pc-separate--system-name-to-system (system-name))
+              with ,system-list =
+              (pc-separate--system-name-to-system (system-name))
               for ,s in (append ,system-list (list 'default))
-              do (setq ,result (assoc ,s ,alst)) ;assq throw error if ALIST is NOT list.
+              ;; assq throw error if ALIST is NOT list.
+              do (setq ,result (assoc ,s ,alst)) 
               if ,result
               return ,result
               end
               finally return nil   ;if never eval "return form" return nil
               ))
-       (when ,--pc-separate--setq-candicate-- (set ,variable (cdr ,--pc-separate--setq-candicate--)))
+       (when ,--pc-separate--setq-candicate--
+         (set ,variable (cdr ,--pc-separate--setq-candicate--)))
        ,--pc-separate--setq-candicate--)))
 
 ;;;###autoload
