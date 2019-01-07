@@ -52,7 +52,8 @@
 (require 'cl-lib)
 
 (defgroup pc-separate nil
-  "pc-separate group.")
+  "pc-separate group."
+  :group 'tools)
 
 (defcustom pc-separate-system-alist '()
   "Relationship of \"number or symbol\", and system-name on pc-separate.
