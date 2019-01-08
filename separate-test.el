@@ -1,4 +1,4 @@
-;;; pc-separate-test.el --- Test of pc-separate
+;;; separate-test.el --- Test of pc-separate
 
 ;; Copyright (C) 2018  ROCKTAKEY
 
@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'ert)
-(require 'pc-separate)
+(require 'separate)
 (eval-when-compile
   (require 'cl))
 
