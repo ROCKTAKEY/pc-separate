@@ -117,15 +117,15 @@ If the value is t, treat the element as matched."
   "Set value of VARIABLE each system.
 each element of ALIST is (SYSTEM . VALUE), and VARIABLE is set to VALUE
 if (pc-separate-current-system-p SYSTEM) return non-nil."
-  (let* ((--pc-separate--setq-candicate-- (gensym "condicate"))
+  (let* ((candicate (gensym "condicate"))
          (result (gensym "result"))
          (system-list (gensym "system-list"))
          (s (gensym "s"))
          (alst alist))
     ;; throw error if ALIST is NOT both alist and symbol.
     (ignore (cl-loop for (x . y) in (eval alst))) 
-    `(let (,--pc-separate--setq-candicate--)
-       (setq ,--pc-separate--setq-candicate--
+    `(let (,candicate)
+       (setq ,candicate
              (cl-loop
               with ,result = nil
               with ,system-list =
@@ -138,9 +138,9 @@ if (pc-separate-current-system-p SYSTEM) return non-nil."
               end
               finally return nil   ;if never eval "return form" return nil
               ))
-       (when ,--pc-separate--setq-candicate--
-         (set ,variable (cdr ,--pc-separate--setq-candicate--)))
-       ,--pc-separate--setq-candicate--)))
+       (when ,candicate
+         (set ,variable (cdr ,candicate)))
+       ,candicate)))
 
 ;;;###autoload
 (defmacro pc-separate-setq (variable alist)
