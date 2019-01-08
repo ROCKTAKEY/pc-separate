@@ -1,4 +1,4 @@
-;;; pc-separate-test.el --- Test of pc-separate
+;;; separate-test.el --- Test of separate
 
 ;; Copyright (C) 2018  ROCKTAKEY
 
@@ -25,11 +25,11 @@
 ;;; Code:
 
 (require 'ert)
-(require 'pc-separate)
+(require 'separate)
 (eval-when-compile
   (require 'cl))
 
-(ert-deftest pc-separate-assoc-all ()
+(ert-deftest separate-assoc-all ()
   (let ((alist
          '(("windows-pc1" . WIN1)
            ("mac-pc1" . MAC1)
@@ -39,20 +39,20 @@
            (key . val)
            (key . val2)
            (foo . var))))
-    (should (equal (pc-separate--cdr-assoc-all "windows-pc2" alist)
+    (should (equal (separate--cdr-assoc-all "windows-pc2" alist)
                    '(1 5 win2)))
-    (should (equal (pc-separate--cdr-assoc-all 'key alist)
+    (should (equal (separate--cdr-assoc-all 'key alist)
                    '(val val2)))
-    (should (equal (pc-separate--cdr-assoc-all 'foo alist)
+    (should (equal (separate--cdr-assoc-all 'foo alist)
                    '(var)))
-    (should (equal (pc-separate--cdr-assoc-all 'some alist)
+    (should (equal (separate--cdr-assoc-all 'some alist)
                    nil))
-    (should (equal (pc-separate--cdr-assoc-all "some" alist)
+    (should (equal (separate--cdr-assoc-all "some" alist)
                    nil))
     )
   )
 
-(ert-deftest pc-separate-assoc-or-eval ()
+(ert-deftest separate-assoc-or-eval ()
   (let ((alist
          '(("windows-pc1" . WIN1)
            ("mac-pc1" . MAC1)
@@ -63,96 +63,96 @@
            (key . val2)
            (foo . var)))
         )
-    (should (equal (pc-separate--assoc-or-eval "windows-pc2" alist)
+    (should (equal (separate--assoc-or-eval "windows-pc2" alist)
                    '("windows-pc2" . 1)))
-    (should (equal (pc-separate--assoc-or-eval 'key alist)
+    (should (equal (separate--assoc-or-eval 'key alist)
                    '(key . val)))
-    (should (equal (pc-separate--assoc-or-eval 'foo alist)
+    (should (equal (separate--assoc-or-eval 'foo alist)
                    '(foo . var)))
-    (should (equal (pc-separate--assoc-or-eval 'some alist)
+    (should (equal (separate--assoc-or-eval 'some alist)
                    nil))
-    (should (equal (pc-separate--assoc-or-eval "some" alist)
+    (should (equal (separate--assoc-or-eval "some" alist)
                    nil))
     ;; eval
     )
   )
 
-(ert-deftest pc-separate-sysname-to-sys ()
-  (let ((pc-separate-system-alist '(("windows-pc1" . WIN1)
+(ert-deftest separate-sysname-to-sys ()
+  (let ((separate-system-alist '(("windows-pc1" . WIN1)
                                     ("mac-pc1" . MAC1)
                                     ("windows-pc2" . 1)
                                     ("windows-pc2" . 5)
                                     ("windows-pc2" . win2))))
-    (should (equal (pc-separate--system-name-to-system "windows-pc2")
+    (should (equal (separate--system-name-to-system "windows-pc2")
                    '(1 5 win2 "windows-pc2")))
-    (should (equal (pc-separate--system-name-to-system "windows-pc1")
+    (should (equal (separate--system-name-to-system "windows-pc1")
                    '(WIN1 "windows-pc1")))
-    (should (equal (pc-separate--system-name-to-system "some")
+    (should (equal (separate--system-name-to-system "some")
                    '("some")))
     ))
 
-(ert-deftest pc-separate-sys-to-sysname ()
-  (let ((pc-separate-system-alist '(("windows-pc1" . WIN1)
+(ert-deftest separate-sys-to-sysname ()
+  (let ((separate-system-alist '(("windows-pc1" . WIN1)
                                     ("mac-pc1" . MAC1)
                                     ("windows-pc2" . 1)
                                     ("windows-pc2" . 5)
                                     ("windows-pc2" . win2))))
-    (should (equal (pc-separate--system-to-system-name 1)
+    (should (equal (separate--system-to-system-name 1)
                    "windows-pc2"))
-    (should (equal (pc-separate--system-to-system-name 'win2)
+    (should (equal (separate--system-to-system-name 'win2)
                    "windows-pc2"))
-    (should (equal (pc-separate--system-to-system-name 5)
+    (should (equal (separate--system-to-system-name 5)
                    "windows-pc2"))
-    (should (equal (pc-separate--system-to-system-name 'MAC1)
+    (should (equal (separate--system-to-system-name 'MAC1)
                    "mac-pc1"))
-    (should (equal(pc-separate--system-to-system-name 'some)
+    (should (equal(separate--system-to-system-name 'some)
                   nil))
     ))
 
-(ert-deftest pc-separate-current-sys-p ()
-  (let ((pc-separate-system-alist '(("windows-pc1" . WIN1)
+(ert-deftest separate-current-sys-p ()
+  (let ((separate-system-alist '(("windows-pc1" . WIN1)
                                     ("mac-pc1" . MAC1)
                                     ("windows-pc2" . 1)
                                     ("windows-pc2" . 5)
                                     ("windows-pc2" . win2))))
     (flet ((system-name () "windows-pc2"))
-      (should (pc-separate--current-system-p 5))
-      (should (pc-separate--current-system-p 1))
-      (should (pc-separate--current-system-p 'win2))
-      (should (not (pc-separate--current-system-p 'WIN1)))
-      (should (not (pc-separate--current-system-p 4)))
+      (should (separate--current-system-p 5))
+      (should (separate--current-system-p 1))
+      (should (separate--current-system-p 'win2))
+      (should (not (separate--current-system-p 'WIN1)))
+      (should (not (separate--current-system-p 4)))
       )))
 
-(ert-deftest pc-separate-set ()
+(ert-deftest separate-set ()
   (let ((var nil)
-        (pc-separate-system-alist '(("windows-pc1" . WIN1)
+        (separate-system-alist '(("windows-pc1" . WIN1)
                                     ("mac-pc1" . MAC1)
                                     ("windows-pc2" . 1)
                                     ("windows-pc2" . 5)
                                     ("windows-pc2" . win2))))
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
-      (pc-separate-set 'var
+      (separate-set 'var
                        '(("windows-pc2" . 1)
                          (5 . 2)
                          (win2 . 3)))      
       (should (equal var 2))
       
-      (pc-separate-set 'var
+      (separate-set 'var
                        '(("windows-pc1" . 1)
                          (WIN1 . 2)
                          (5 . 3)
                          (win2 . 4)))
       (should (equal var 3))
       
-      (pc-separate-set 'var
+      (separate-set 'var
                        '(("windows-pc1" . 1)
                          (WIN1 . 2)
                          ("windows-pc2" . 3)
                          ))
       (should (equal var 3))
       
-      (pc-separate-set 'var
+      (separate-set 'var
                        '(("windows-pc1" . 1)
                          (WIN1 . 2)
                          ("windows-pc2" . 3)
@@ -161,22 +161,22 @@
       ))
   )
 
-(ert-deftest pc-separate-setq ()
+(ert-deftest separate-setq ()
   (let ((var nil)
-        (pc-separate-system-alist '(("windows-pc1" . WIN1)
+        (separate-system-alist '(("windows-pc1" . WIN1)
                                     ("mac-pc1" . MAC1)
                                     ("windows-pc2" . 1)
                                     ("windows-pc2" . 5)
                                     ("windows-pc2" . win2))))
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
-      (pc-separate-setq var
+      (separate-setq var
                         '(("windows-pc2" . 1)
                           (5 . 2)
                           (win2 . 3)))
       
       (should (equal var 2))
-      (pc-separate-setq var
+      (separate-setq var
                         '(("windows-pc1" . 1)
                           (WIN1 . 2)
                           (5 . 3)
@@ -185,9 +185,9 @@
       ))
   )
 
-(ert-deftest pc-separate-cond ()
+(ert-deftest separate-cond ()
   (let ((var nil)
-        (pc-separate-system-alist '(("windows-pc1" . WIN1)
+        (separate-system-alist '(("windows-pc1" . WIN1)
                                     ("mac-pc1" . MAC1)
                                     ("windows-pc2" . 1)
                                     ("windows-pc2" . 5)
@@ -198,7 +198,7 @@
 
       (should
        (equal
-        (pc-separate-cond
+        (separate-cond
          (("windows-pc2"
            1)
           (5
@@ -211,7 +211,7 @@
             100)))
         2))
       
-      (pc-separate-cond
+      (separate-cond
        (("windows-pc2"
          (abc 1))
         (5
@@ -231,6 +231,6 @@
 ;;          ("windows-pc2" . 3)
 ;;          (win2 . 4)))
 
-(provide 'pc-separate-test)
-;;; pc-separate-test.el ends here
+(provide 'separate-test)
+;;; separate-test.el ends here
 
