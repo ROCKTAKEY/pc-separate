@@ -3,7 +3,7 @@
 ;; Copyright (C) 2018  ROCKTAKEY
 
 ;; Author: ROCKTAKEY <rocktakey@gmail.com>
-;; Keywords: local
+;; Keywords: tools
 
 ;; Package-Requires: ((cl-lib "1.0") (emacs "26.4"))
 
