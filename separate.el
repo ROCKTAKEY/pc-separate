@@ -117,30 +117,24 @@ If the value is t, treat the element as matched."
   "Set value of VARIABLE each system.
 each element of ALIST is (SYSTEM . VALUE), and VARIABLE is set to VALUE
 if (separate-current-system-p SYSTEM) return non-nil."
-  (let* ((candicate (gensym "condicate"))
-         (result (gensym "result"))
-         (system-list (gensym "system-list"))
-         (s (gensym "s"))
-         (alst alist))
+  (let ((valid-cons (gensym "valid-cons"))
+        (candicate (gensym "candicate"))
+        (value (gensym "value"))
+        (alst alist))
     ;; throw error if ALIST is NOT both alist and symbol.
     (ignore (cl-loop for (x . y) in (eval alst))) 
-    `(let (,candicate)
-       (setq ,candicate
+    `(let (,valid-cons)
+       (setq ,valid-cons
              (cl-loop
-              with ,result = nil
-              with ,system-list =
-              (separate--system-name-to-system (system-name))
-              for ,s in (append ,system-list (list 'default))
-              ;; assq throw error if ALIST is NOT list.
-              do (setq ,result (assoc ,s ,alst)) 
-              if ,result
-              return ,result
+              for (,candicate . ,value) in ,alst
+              if (separate--current-system-p ,candicate)
+              return (cons ,candicate ,value)
               end
               finally return nil   ;if never eval "return form" return nil
               ))
-       (when ,candicate
-         (set ,variable (cdr ,candicate)))
-       ,candicate)))
+       (when ,valid-cons
+         (set ,variable (cdr ,valid-cons)))
+       ,valid-cons)))
 
 ;;;###autoload
 (defmacro separate-setq (variable alist)
