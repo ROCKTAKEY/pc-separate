@@ -14,9 +14,8 @@
    - Set value of =VARIABLE= depend on =system=.
    - Each element of =ALIST= is =(SYSTEM . VALUE)=, and =VARIABLE= is set to =VALUE=
      if =SYSTEM= accords current system.
-   - If there are some cons cells whose car accords current system, =number-or-symbol=
-     defined on upper stream in =separate-system-alist= is used. System-name is the 
-     lowest priority.
+   - If there are some cons cells whose car accords current system, upper cons sell
+     is applied.
    - in the cons cell whose =SYSTEM= is =default=, its =VALUE= is used only when any
      other =SYSTEM= doesn't accord current system.
 ** =separate-setq (variable alist)=

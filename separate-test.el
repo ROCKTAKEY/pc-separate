@@ -126,61 +126,61 @@
 (ert-deftest separate-set ()
   (let ((var nil)
         (separate-system-alist '(("windows-pc1" . WIN1)
-                                    ("mac-pc1" . MAC1)
-                                    ("windows-pc2" . 1)
-                                    ("windows-pc2" . 5)
-                                    ("windows-pc2" . win2))))
+                                 ("mac-pc1" . MAC1)
+                                 ("windows-pc2" . 1)
+                                 ("windows-pc2" . 5)
+                                 ("windows-pc2" . win2))))
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
       (separate-set 'var
-                       '(("windows-pc2" . 1)
-                         (5 . 2)
-                         (win2 . 3)))      
-      (should (equal var 2))
+                    '(("windows-pc2" . 1)
+                      (5 . 2)
+                      (win2 . 3)))
+      (should (equal var 1))
       
       (separate-set 'var
-                       '(("windows-pc1" . 1)
-                         (WIN1 . 2)
-                         (5 . 3)
-                         (win2 . 4)))
+                    '(("windows-pc1" . 1)
+                      (WIN1 . 2)
+                      (5 . 3)
+                      (win2 . 4)))
       (should (equal var 3))
       
       (separate-set 'var
-                       '(("windows-pc1" . 1)
-                         (WIN1 . 2)
-                         ("windows-pc2" . 3)
-                         ))
+                    '(("windows-pc1" . 1)
+                      (WIN1 . 2)
+                      ("windows-pc2" . 3)
+                      ))
       (should (equal var 3))
       
       (separate-set 'var
-                       '(("windows-pc1" . 1)
-                         (WIN1 . 2)
-                         ("windows-pc2" . 3)
-                         (win2 . 4)))   ;symbol have higher priority
-      (should (equal var 4))
+                    '(("windows-pc1" . 1)
+                      (WIN1 . 2)
+                      ("windows-pc2" . 3)
+                      (win2 . 4)))   ;symbol have higher priority
+      (should (equal var 3))
       ))
   )
 
 (ert-deftest separate-setq ()
   (let ((var nil)
         (separate-system-alist '(("windows-pc1" . WIN1)
-                                    ("mac-pc1" . MAC1)
-                                    ("windows-pc2" . 1)
-                                    ("windows-pc2" . 5)
-                                    ("windows-pc2" . win2))))
+                                 ("mac-pc1" . MAC1)
+                                 ("windows-pc2" . 1)
+                                 ("windows-pc2" . 5)
+                                 ("windows-pc2" . win2))))
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
       (separate-setq var
-                        '(("windows-pc2" . 1)
-                          (5 . 2)
-                          (win2 . 3)))
+                     '(("windows-pc2" . 1)
+                       (5 . 2)
+                       (win2 . 3)))
       
-      (should (equal var 2))
+      (should (equal var 1))
       (separate-setq var
-                        '(("windows-pc1" . 1)
-                          (WIN1 . 2)
-                          (5 . 3)
-                          (win2 . 4)))
+                     '(("windows-pc1" . 1)
+                       (WIN1 . 2)
+                       (5 . 3)
+                       (win2 . 4)))
       (should (equal var 3))
       ))
   )
@@ -188,10 +188,10 @@
 (ert-deftest separate-cond ()
   (let ((var nil)
         (separate-system-alist '(("windows-pc1" . WIN1)
-                                    ("mac-pc1" . MAC1)
-                                    ("windows-pc2" . 1)
-                                    ("windows-pc2" . 5)
-                                    ("windows-pc2" . win2))))
+                                 ("mac-pc1" . MAC1)
+                                 ("windows-pc2" . 1)
+                                 ("windows-pc2" . 5)
+                                 ("windows-pc2" . win2))))
     (flet ((system-name () "windows-pc2")
            (abc (arg) (setq var arg)))
       (should (equal (system-name) "windows-pc2"))
@@ -199,17 +199,11 @@
       (should
        (equal
         (separate-cond
-         (("windows-pc2"
-           1)
-          (5
-           3
-           2)
-          (win2
-           6
-           3)
-          (default
-            100)))
-        2))
+         (("windows-pc2" 1)
+          (5 3 2)
+          (win2 6 3)
+          (default 100)))
+        1))
       
       (separate-cond
        (("windows-pc2"
@@ -218,7 +212,7 @@
          (abc 2))
         (win2
          (abc 3))))
-      (should (equal var 2))
+      (should (equal var 1))
       )))
 
 
