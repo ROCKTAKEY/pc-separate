@@ -1,23 +1,30 @@
-#+TITLE: pc-separate
+#+TITLE: separate
 * Change action by pc system
-  =pc-separate= provide function that help you to separate setting
+  =separate= provide function that help you to separate setting
   by system name given by =(system-name)=. 
 * Words
-  -  =system= means system-name or symbol which is defined in =pc-separate-system-alist=.
+  -  =separator= means system-name or symbol which is defined in
+     =separate-separator-alist=. =system-name=, which =(system-name)= returns,
+     is also able to be used as =separator=.
 * Variables
-** =pc-separate-system-alist=
+** =separate-separator-alist=
    an associated list. Each element is cons cell,
-   =(system-name . number-or-symbol)=. in this package, you can use
-   =number-or-symbol= as =system= instead of =system-name=.
+   =(system-name . number-or-symbol)=. in this package, you can use the
+   =number-or-symbol= as =separator= instead of =system-name= in below functions.
 * Macros
-** =pc-separate-set (variable alist)=
-   - Set value of =VARIABLE= depend on =system=.
-   - Each element of =ALIST= is =(SYSTEM . VALUE)=, and =VARIABLE= is set to =VALUE=
-     if =SYSTEM= accords current system.
-   - If there are some cons cells whose car accords current system, =number-or-symbol=
-     defined on upper stream in =pc-separate-system-alist= is used. System-name is the 
-     lowest priority.
-   - in the cons cell whose =SYSTEM= is =default=, its =VALUE= is used only when any
-     other =SYSTEM= doesn't accord current system.
-** =pc-separate-setq (variable alist)=
-   Same as pc-separate-set, but =VARIABLE= doesn't have to be quoted.
+** =separate-set (variable alist)=
+   - Set value of =VARIABLE= depend on =SEPARATOR= below.
+   - Each element of =ALIST= is =(SEPARATOR . VALUE)=, and =VARIABLE= is set to =VALUE=
+     if =SEPARATOR= accords current system.
+   - If there are some cons cells whose car (= =SEPARATOR=) accords current system,
+     =number-or-symbol= defined on upper stream in =separate-system-alist= is used.
+   - in the cons cell whose =SEPARATOR= is =default=, its =VALUE= is used only when any
+     other =SEPARATOR= doesn't accord current system.
+** =separate-setq (variable alist)=
+   Same as separate-set, but =VARIABLE= doesn't have to be quoted.
+** =separate-cond (clauses)=
+   - Similar to =cond=, but use =SEPARATOR= instead of =CANDICATE=.
+     If =SEPARATOR= accords current system, evaluate =BODY=.
+   - Priority of each clause is same as =separate-set=.
+* License
+  This package is licensed by GPLv3. See [[file:LICENSE][LICENSE]].
