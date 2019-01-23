@@ -18,7 +18,6 @@
      if =SEPARATOR= accords current system.
    - If there are some cons cells whose car (= =SEPARATOR=) accords current system,
      =number-or-symbol= defined on upper stream in =separate-system-alist= is used.
-     System-name is the lowest priority.
    - in the cons cell whose =SEPARATOR= is =default=, its =VALUE= is used only when any
      other =SEPARATOR= doesn't accord current system.
 ** =separate-setq (variable alist)=
