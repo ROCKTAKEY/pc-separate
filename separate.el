@@ -114,9 +114,11 @@ If the value is t, treat the element as matched."
 
 ;;;###autoload
 (defmacro separate-set (variable alist)
-  "Set value of VARIABLE each system.
+  "Set value of VARIABLE to VALUE each system.
 each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
-if (separate-current-separator-p SEPARATOR) return non-nil."
+if (separate-current-separator-p SEPARATOR) return non-nil.
+
+\(fn VARIABLE ((SEPARATOR . VALUE)...))"
   (let ((valid-cons (gensym "valid-cons"))
         (separator (gensym "separator"))
         (value (gensym "value"))
@@ -138,17 +140,21 @@ if (separate-current-separator-p SEPARATOR) return non-nil."
 
 ;;;###autoload
 (defmacro separate-setq (variable alist)
-  "Set value of VARIABLE each system.
+  "Set value of VARIABLE to VALUE each system.
 each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
-if (separate-current-SEPARATOR-p SEPARATOR) return non-nil.
-variable have to be non-quoted."
+if (separate-current-separator-p SEPARATOR) return non-nil.
+variable have to be non-quoted.
+
+\(fn VARIABLE ((SEPARATOR . VALUE)...))"
   `(separate-set (quote ,variable) ,alist))
 
 ;;;###autoload
 (defmacro separate-cond (clauses)
   "Eval BODY if SEPARATOR accords current system.
 Each clause looks like (SEPARATOR BODY...). BODY is evaluate
-if (separate-current-separator-p SEPARATOR) return non-nil."
+if (separate-current-separator-p SEPARATOR) return non-nil.
+
+\(fn ((SEPARATOR BODY...)...))"
   (let ((c (gensym)))
     `(let (,c)
        (separate-setq ,c ',clauses)
