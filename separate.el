@@ -49,7 +49,8 @@
 
 ;;; Code:
 
-(require 'cl-lib)
+(eval-when-compile
+  (require 'cl-lib))
 
 (defgroup separate nil
   "separate group."
