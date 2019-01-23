@@ -114,7 +114,7 @@ If the value is t, treat the element as matched."
 
 ;;;###autoload
 (defmacro separate-set (variable alist)
-  "Set value of VARIABLE each system.
+  "Set value of VARIABLE to VALUE each system.
 each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
 if (separate-current-separator-p SEPARATOR) return non-nil.
 
@@ -140,9 +140,9 @@ if (separate-current-separator-p SEPARATOR) return non-nil.
 
 ;;;###autoload
 (defmacro separate-setq (variable alist)
-  "Set value of VARIABLE each system.
+  "Set value of VARIABLE to VALUE each system.
 each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
-if (separate-current-SEPARATOR-p SEPARATOR) return non-nil.
+if (separate-current-separator-p SEPARATOR) return non-nil.
 variable have to be non-quoted.
 
 \(fn VARIABLE ((SEPARATOR . VALUE)...))"
