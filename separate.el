@@ -125,13 +125,13 @@ if (separate-current-separator-p SEPARATOR) return non-nil.
   (let ((valid-cons (gensym "valid-cons"))
         (separator (gensym "separator"))
         (value (gensym "value"))
-        (alst alist))
+        )
     ;; throw error if ALIST is NOT both alist and symbol.
-    (ignore (cl-loop for (x . y) in (eval alst))) 
+    (ignore (cl-loop for (x . y) in alist))
     `(let (,valid-cons)
        (setq ,valid-cons
              (cl-loop
-              for (,separator . ,value) in ,alst
+              for (,separator . ,value) in ',alist
               if (separate--current-separator-p ,separator)
               return (cons ,separator ,value)
               end
@@ -160,7 +160,7 @@ if (separate-current-separator-p SEPARATOR) return non-nil.
 \(fn ((SEPARATOR BODY...)...))"
   (let ((c (gensym)))
     `(let (,c)
-       (separate-setq ,c ',clauses)
+       (separate-setq ,c ,clauses)
        (eval (cons 'progn ,c)))))
 
 (provide 'separate)
