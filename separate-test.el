@@ -125,11 +125,9 @@
 
 (ert-deftest separate-set ()
   (let ((var nil)
-        (separate-separator-alist '(("windows-pc1" . WIN1)
-                                    ("mac-pc1" . MAC1)
-                                    ("windows-pc2" . 1)
-                                    ("windows-pc2" . 5)
-                                    ("windows-pc2" . win2))))
+        (separate-separator-alist '((WIN1 . "windows-pc1")
+                                    (MAC1 . "mac-pc1")
+                                    (win2 . "windows-pc2"))))
 
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))

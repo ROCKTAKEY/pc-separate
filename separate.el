@@ -63,7 +63,7 @@
 You can add (system-name . number-or-symbol).
 And you can use the number instead of system-name on separate."
   :group 'separate
-  :type '(set (cons string (choice integer symbol)))
+  :type '(set (cons (choice integer symbol) string))
   )
 
 
