@@ -1,16 +1,13 @@
 #+TITLE: separate
-* Change action by pc system
+* Change action by system environment
   =separate= provide function that help you to separate setting
-  by system name given by =(system-name)=. 
-* Words
-  -  =separator= means system-name or symbol which is defined in
-     =separate-separator-alist=. =system-name=, which =(system-name)= returns,
-     is also able to be used as =separator=.
+  by system environment, such as system-name given by =(system-name)=,
+  Emacs version, OS, and so on.
 * Variables
 ** =separate-separator-alist=
-   an associated list. Each element is cons cell,
-   =(system-name . number-or-symbol)=. in this package, you can use the
-   =number-or-symbol= as =separator= instead of =system-name= in below functions.
+   - An associated list. Each element is cons cell,
+     =(symbol . separator)=. In this package, you can use the =symbol=
+     as the =separator=.
 * Macros
 ** =separate-set (variable alist)=
    - Set value of =VARIABLE= depend on =SEPARATOR= below.
