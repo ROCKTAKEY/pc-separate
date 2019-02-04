@@ -278,8 +278,23 @@
                      (win2 . 4)))
       (should (equal var 11))
 
-      ))
-  )
+      ;; default
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (MAC1 . 3)
+                     (default . 12)))
+      (should (equal var 12))
+
+      ;; default
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (default . 12)
+                     (win2 . 3)
+                     ))
+      (should (equal var 3))
+      )))
 
 (ert-deftest separate-setq ()
   (let ((var nil)

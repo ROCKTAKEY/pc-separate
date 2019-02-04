@@ -227,25 +227,31 @@ trapped before applied this variable to.")
 ;;;###autoload
 (defmacro separate-set (variable alist)
   "Set value of VARIABLE to VALUE each system.
-  each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
-  if (separate-current-separator-p SEPARATOR) return non-nil.
+each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
+if (separate-current-separator-p SEPARATOR) return non-nil.
 
-  \(fn VARIABLE ((SEPARATOR . VALUE)...))"
+\(fn VARIABLE ((SEPARATOR . VALUE)...))"
   (let ((valid-cons (gensym "valid-cons"))
         (separator (gensym "separator"))
         (value (gensym "value"))
+        (default (gensym "default"))
         )
     ;; throw error if ALIST is NOT both alist and symbol.
     (ignore (cl-loop for (x . y) in alist))
-    `(let (,valid-cons)
+    `(let (,valid-cons (,default nil))
        (setq ,valid-cons
              (cl-loop
               for (,separator . ,value) in ',alist
-              if (separate--current-separator-p ,separator)
+              if (eq ,separator 'default)
+              do (setq ,default (cons ,separator ,value))
+              else if (separate--current-separator-p ,separator)
               return (cons ,separator ,value)
               end
-              finally return nil   ;if never eval "return form" return nil
+              ;; If never eval "return form", return default
+              ;; which is nil if no "default" separator.
+              finally return ,default
               ))
+       ;; If no valid-cons, return nil because of `when' macro.
        (when ,valid-cons
          (set ,variable (cdr ,valid-cons)))
        ,valid-cons)))
