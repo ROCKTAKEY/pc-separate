@@ -69,7 +69,8 @@ And you can use the number instead of system-name on separate."
 
 
 (defvar separate--function-alist
-  '(((:alias :separators) . separate--separators)
+  '(((:alias :separators :or) . separate--separators)
+    (:and                 . separate--and)
     (:system-name         . separate--system-name)
     (:emacs-version>=     . separate--emacs-version>=)
     (:os                  . separate--os)
@@ -96,6 +97,10 @@ And you can use the number instead of system-name on separate."
 (defun separate--separators (args)
   ""
   (separate--mapc-or 'separate--current-separator-p args))
+
+(defun separate--and (args)
+  ""
+  (separate--mapc-and 'separate--current-separator-p args))
 
 (defun separate--os (args)
   ""
@@ -201,7 +206,7 @@ trapped before applied this variable to.")
 
 (defun separate--symbol-separator-current-p (symbol-separator)
   ""
-  (or (separate--os symbol-separator)
+  (or (separate--os (list symbol-separator))
       (separate--current-separator-p
        (separate--symbol-separator-instance symbol-separator)))
   )
