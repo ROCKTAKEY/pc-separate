@@ -99,7 +99,7 @@
      other =SEPARATOR= isn't valid.
 ** =separate-setq (variable alist)=
    Same as separate-set, but =VARIABLE= doesn't have to be quoted.
-** =separate-cond (&rest clauses)=
+** =separate-cond (&body clauses)=
    - Similar to =cond=, but use =SEPARATOR= instead of =CANDICATE=.
      If =SEPARATOR= is valid, evaluate =BODY=.
    - Priority of each clause is same as =separate-set=.

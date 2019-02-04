@@ -267,7 +267,7 @@ variable have to be non-quoted.
   `(separate-set (quote ,variable) ,alist))
 
 ;;;###autoload
-(defmacro separate-cond (&rest clauses)
+(defmacro separate-cond (&body clauses)
   "Eval BODY if SEPARATOR accords current system.
 Each clause looks like (SEPARATOR BODY...). BODY is evaluate
 if (separate-current-separator-p SEPARATOR) return non-nil.
