@@ -160,8 +160,22 @@
   (let ((var nil)
         (separate-separator-alist '((WIN1 . "windows-pc1")
                                     (MAC1 . "mac-pc1")
-                                    (win2 . "windows-pc2"))))
-
+                                    (win2 . "windows-pc2")
+                                    (all  . (:eval t))
+                                    (win (:separators WIN1 win2))
+                                    (seps (:alias MAC1 WIN1))
+                                    (ev1 . 5)
+                                    (ev2 . (:emacs-version>= 5 3))
+                                    (os . (:os windows-nt))
+                                    (os1 . windows-nt)
+                                    (pkg . (:package-available cl-lib separate))
+                                    (sn . (:system-name "windows-pc2"))
+                                    (and . (:and
+                                            win os ev1 pkg sn))
+                                    ))
+        (emacs-major-version 6)
+        (emacs-minor-version 2)
+        (system-type 'windows-nt))
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
@@ -183,6 +197,87 @@
                      ("windows-pc2" . 3)
                      (win2 . 4)))
       (should (equal var 3))
+
+      ;; all
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (all  . 3)
+                     (win2 . 4)))
+      (should (equal var 3))
+
+      ;; win
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (win  . 5)
+                     (win2 . 4)))
+      (should (equal var 5))
+
+      ;; seps
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (seps  . 3)
+                     (win2 . 4)))
+      (should (equal var 4))
+
+      ;; ev1
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (ev1  . 5)
+                     (win2 . 4)))
+      (should (equal var 5))
+
+      ;; ev2
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (ev2  . 6)
+                     (win2 . 4)))
+      (should (equal var 6))
+
+      ;; os
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (os  . 7)
+                     (win2 . 4)))
+      (should (equal var 7))
+
+      ;; os1
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (os1  . 8)
+                     (win2 . 4)))
+      (should (equal var 8))
+
+      ;; pkg
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (pkg  . 9)
+                     (win2 . 4)))
+      (should (equal var 9))
+
+      ;; sn
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (sn   . 10)
+                     (win2 . 4)))
+      (should (equal var 10))
+
+      ;; and
+      (separate-set 'var
+                    (("windows-pc1" . 1)
+                     (WIN1 . 2)
+                     (and  . 11)
+                     (win2 . 4)))
+      (should (equal var 11))
+
       ))
   )
 
