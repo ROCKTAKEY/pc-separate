@@ -5,7 +5,7 @@
   Emacs version, OS, and so on.
 * Example
 #+BEGIN_SRC emacs-lisp -n
-  ;; define some separator.
+  ;; Define some separator.
   (setq separate-separator-alist
          '((pc-name1 . "MY-PC-NAME1")
            (pc-name2 . "MY-PC-NAME2")
@@ -17,10 +17,11 @@
                     (pc-name2      . 2)
                     ("MY-PC-NAME3" . 3)
                     (windows-nt    . 4)
-                    ((:eval (something) (bar)) . 5)
-                    ((:package-available 'baz) . 6)
-                    ((:separators "MY-PC-NAME4" gnu/linux) . 7)
-                    ((:and windows-nt (:eval (def)))       . 8)))
+                    ((:eval (something) (bar))       . 5)
+                    ((:package-available 'baz)       . 6)
+                    ((:and windows-nt (:eval (def))) . 7)
+                    ((:separators "MY-PC-NAME4" gnu/linux) . 8)
+                    (default . 0)))
 #+END_SRC
   Value of =foo= is set to:
   - If your =system-name= is ="MY-PC-NAME1"=: 1
@@ -29,10 +30,11 @@
   - Else if your =system-type= is =winodows-nt=: 4
   - Else if returned value by =(something) (bar)= is =non-nil=: 5
   - Else if =(featurep 'baz)= is =non-nil=: 6
-  - Else if your system-name is ="MY-PC-NAME4"= OR your =system-type=
-    is =gnu/linux=:7
   - Else if your =system-type= is =windows-nt= AND returned value by =(def)=
-    is =non-nil=: 8
+    is =non-nil=: 7
+  - Else if your system-name is ="MY-PC-NAME4"= OR your =system-type=
+    is =gnu/linux=:8
+  - If all of =separators= are invalid: 0
 * Separator
   - =separator= means object which can separate system environment.
   - =separator= can be list, symbol, number or string.
@@ -45,8 +47,10 @@
      - Don't have keyword in the =car=. This is put =:separators= keyword
        automatically. See [[:separators/:alias/:or][:separator Section]].
 ** Symbol
-   This is interpreted as =separator= defined in =separate-separator-alist=,
+   - This is interpreted as =separator= defined in =separate-separator-alist=,
    or system-type (same as =:os= keyword). See [[=separate-separator-alist=][separate-separator-alist Section]].
+   - the symbol =default= is special symbol. Element including this is evaluated
+     only when all of other =seprators= are invalid.
 ** Number
    This is interpreted as has =:emacs-version>== keyword.
    See [[:emacs-version>=][:emacs-version>= Section]].
