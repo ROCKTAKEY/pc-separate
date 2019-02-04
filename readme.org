@@ -7,21 +7,21 @@
 #+BEGIN_SRC emacs-lisp -n
   ;; Define some separator.
   (setq separate-separator-alist
-         '((pc-name1 . "MY-PC-NAME1")
-           (pc-name2 . "MY-PC-NAME2")
-           (my-candicate . (:eval (abc)))
-    ))
+        '((pc-name1 . "MY-PC-NAME1")
+          (pc-name2 . "MY-PC-NAME2")
+          (my-candicate . (:eval (abc)))
+          ))
 
-    (separate-setq foo
-                   ((pc-name1      . 1)
-                    (pc-name2      . 2)
-                    ("MY-PC-NAME3" . 3)
-                    (windows-nt    . 4)
-                    ((:eval (something) (bar))       . 5)
-                    ((:package-available 'baz)       . 6)
-                    ((:and windows-nt (:eval (def))) . 7)
-                    ((:separators "MY-PC-NAME4" gnu/linux) . 8)
-                    (default . 0)))
+  (separate-setq foo
+     ((pc-name1      . 1)
+     (pc-name2      . 2)
+     ("MY-PC-NAME3" . 3)
+     (windows-nt    . 4)
+     ((:eval (something) (bar))       . 5)
+     ((:package-available 'baz)       . 6)
+     ((:and windows-nt (:eval (def))) . 7)
+     ((:separators "MY-PC-NAME4" gnu/linux) . 8)
+     (default . 0)))
 #+END_SRC
   Value of =foo= is set to:
   - If your =system-name= is ="MY-PC-NAME1"=: 1
