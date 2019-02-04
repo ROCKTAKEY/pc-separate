@@ -24,16 +24,16 @@
      (default . 0)))
 #+END_SRC
   Value of =foo= is set to:
-  - If your =system-name= is ="MY-PC-NAME1"=: 1
-  - Else if your system-name is ="MY-PC-NAME2"=: 2
-  - Else if your system-name is ="MY-PC-NAME3"=: 3
+  - If your =system-name= is "MY-PC-NAME1": 1
+  - Else if your system-name is "MY-PC-NAME2": 2
+  - Else if your system-name is "MY-PC-NAME3": 3
   - Else if your =system-type= is =winodows-nt=: 4
   - Else if returned value by =(something) (bar)= is =non-nil=: 5
   - Else if =(featurep 'baz)= is =non-nil=: 6
   - Else if your =system-type= is =windows-nt= AND returned value by =(def)=
     is =non-nil=: 7
-  - Else if your system-name is ="MY-PC-NAME4"= OR your =system-type=
-    is =gnu/linux=:8
+  - Else if your system-name is "MY-PC-NAME4" OR your =system-type=
+    is =gnu/linux=: 8
   - If all of =separators= are invalid: 0
 * Separator
   - =separator= means object which can separate system environment.
