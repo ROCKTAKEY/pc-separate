@@ -261,12 +261,12 @@ variable have to be non-quoted.
   `(separate-set (quote ,variable) ,alist))
 
 ;;;###autoload
-(defmacro separate-cond (clauses)
+(defmacro separate-cond (&rest clauses)
   "Eval BODY if SEPARATOR accords current system.
 Each clause looks like (SEPARATOR BODY...). BODY is evaluate
 if (separate-current-separator-p SEPARATOR) return non-nil.
 
-\(fn ((SEPARATOR BODY...)...))"
+\(fn (SEPARATOR BODY...)...)"
   (let ((c (gensym)))
     `(let (,c)
        (separate-setq ,c ,clauses)
