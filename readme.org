@@ -1,30 +1,107 @@
 #+TITLE: separate
-* Change action by pc system
+* Change action by system environment
   =separate= provide function that help you to separate setting
-  by system name given by =(system-name)=. 
-* Words
-  -  =separator= means system-name or symbol which is defined in
-     =separate-separator-alist=. =system-name=, which =(system-name)= returns,
-     is also able to be used as =separator=.
+  by system environment, such as system-name given by =(system-name)=,
+  Emacs version, OS, and so on.
+* Example
+#+BEGIN_SRC emacs-lisp -n
+  ;; Define some separator.
+  (setq separate-separator-alist
+         '((pc-name1 . "MY-PC-NAME1")
+           (pc-name2 . "MY-PC-NAME2")
+           (my-candicate . (:eval (abc)))
+    ))
+
+    (separate-setq foo
+                   ((pc-name1      . 1)
+                    (pc-name2      . 2)
+                    ("MY-PC-NAME3" . 3)
+                    (windows-nt    . 4)
+                    ((:eval (something) (bar))       . 5)
+                    ((:package-available 'baz)       . 6)
+                    ((:and windows-nt (:eval (def))) . 7)
+                    ((:separators "MY-PC-NAME4" gnu/linux) . 8)
+                    (default . 0)))
+#+END_SRC
+  Value of =foo= is set to:
+  - If your =system-name= is ="MY-PC-NAME1"=: 1
+  - Else if your system-name is ="MY-PC-NAME2"=: 2
+  - Else if your system-name is ="MY-PC-NAME3"=: 3
+  - Else if your =system-type= is =winodows-nt=: 4
+  - Else if returned value by =(something) (bar)= is =non-nil=: 5
+  - Else if =(featurep 'baz)= is =non-nil=: 6
+  - Else if your =system-type= is =windows-nt= AND returned value by =(def)=
+    is =non-nil=: 7
+  - Else if your system-name is ="MY-PC-NAME4"= OR your =system-type=
+    is =gnu/linux=:8
+  - If all of =separators= are invalid: 0
+* Separator
+  - =separator= means object which can separate system environment.
+  - =separator= can be list, symbol, number or string.
+** List
+   - There are 2 types of listed-separator.
+   - One type is:
+     - Have keyword in the =car=. All keywords start ":".
+     - =cdr= of the list is argument. See [[Keywords][Keywords Section]].
+   - The other type is:
+     - Don't have keyword in the =car=. This is put =:separators= keyword
+       automatically. See [[:separators/:alias/:or][:separator Section]].
+** Symbol
+   - This is interpreted as =separator= defined in =separate-separator-alist=,
+   or system-type (same as =:os= keyword). See [[=separate-separator-alist=][separate-separator-alist Section]].
+   - the symbol =default= is special symbol. Element including this is evaluated
+     only when all of other =seprators= are invalid.
+** Number
+   This is interpreted as has =:emacs-version>== keyword.
+   See [[:emacs-version>=][:emacs-version>= Section]].
+** String
+   This is interpreted as has =:system-name= keyword.
+   See [[:system-name][:system-name Section]].
+* Keywords
+** :system-name
+   - This keyword accept multiple argument of =string=. if at least one of
+     argument is same as system-name, this =separator= is valid.
+** :separators/:alias/:or
+   - These keywords accept multiple arguments of =separator=. If at least one
+     of =separators= of arguments is valid, this =separator= is valid.
+** :and
+   - These keywords accept multiple arguments of =separator=. If all
+     =separators= of arguments are valid, this =separator= is valid.
+** :emacs-version>=
+   - This keyword accept 1 or 2 argument(s) of number. First argument is =M=,
+     and second argument (optional) is =m=. If emacs version is same or higher
+     than =M.m=, this =separator= is valid.
+** :eval
+   - This keyword accept multiple arguments of S expression. If returned value
+     of those S expression is =non-nil=, this =separator= is valid.
+** :os
+   - This keyword accept multiple arguments of symbol. If one of arguments is
+     same as =system-type=, this =separator= is valid.
+** :package-available
+   - This keyword accept multiple argument of feature (symbol). If all arguments
+     are returned =non-nil= when passed to =featurep=, this =separator=
+     is valid.
 * Variables
 ** =separate-separator-alist=
-   an associated list. Each element is cons cell,
-   =(system-name . number-or-symbol)=. in this package, you can use the
-   =number-or-symbol= as =separator= instead of =system-name= in below functions.
+   - An associated list. Each element is cons cell,
+     =(symbol . separator)=. In this package, you can use the =symbol=
+     as the =separator=.
+   - In the future, we will provide some functions to define =symbol-separator=
+     like this.
 * Macros
 ** =separate-set (variable alist)=
    - Set value of =VARIABLE= depend on =SEPARATOR= below.
    - Each element of =ALIST= is =(SEPARATOR . VALUE)=, and =VARIABLE= is set to =VALUE=
-     if =SEPARATOR= accords current system.
-   - If there are some cons cells whose car (= =SEPARATOR=) accords current system,
-     =number-or-symbol= defined on upper stream in =separate-system-alist= is used.
+     if =SEPARATOR= is valid.
+   - If there are some cons cells whose car (= =SEPARATOR=) is valid, upstream element
+     is used, and rest of them is not evaluated.
    - in the cons cell whose =SEPARATOR= is =default=, its =VALUE= is used only when any
-     other =SEPARATOR= doesn't accord current system.
+     other =SEPARATOR= isn't valid.
 ** =separate-setq (variable alist)=
    Same as separate-set, but =VARIABLE= doesn't have to be quoted.
 ** =separate-cond (clauses)=
    - Similar to =cond=, but use =SEPARATOR= instead of =CANDICATE=.
-     If =SEPARATOR= accords current system, evaluate =BODY=.
+     If =SEPARATOR= is valid, evaluate =BODY=.
    - Priority of each clause is same as =separate-set=.
 * License
   This package is licensed by GPLv3. See [[file:LICENSE][LICENSE]].
