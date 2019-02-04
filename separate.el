@@ -227,10 +227,10 @@ trapped before applied this variable to.")
 ;;;###autoload
 (defmacro separate-set (variable alist)
   "Set value of VARIABLE to VALUE each system.
-  each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
-  if (separate-current-separator-p SEPARATOR) return non-nil.
+each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
+if (separate-current-separator-p SEPARATOR) return non-nil.
 
-  \(fn VARIABLE ((SEPARATOR . VALUE)...))"
+\(fn VARIABLE ((SEPARATOR . VALUE)...))"
   (let ((valid-cons (gensym "valid-cons"))
         (separator (gensym "separator"))
         (value (gensym "value"))
