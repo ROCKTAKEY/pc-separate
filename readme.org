@@ -13,7 +13,7 @@
           ))
 
   (separate-setq foo
-     ((pc-name1      . 1)
+    ((pc-name1      . 1)
      (pc-name2      . 2)
      ("MY-PC-NAME3" . 3)
      (windows-nt    . 4)
@@ -24,17 +24,17 @@
      (default . 0)))
 #+END_SRC
   Value of =foo= is set to:
-  - If your =system-name= is "MY-PC-NAME1": 1
-  - Else if your system-name is "MY-PC-NAME2": 2
-  - Else if your system-name is "MY-PC-NAME3": 3
-  - Else if your =system-type= is =winodows-nt=: 4
-  - Else if returned value by =(something) (bar)= is =non-nil=: 5
-  - Else if =(featurep 'baz)= is =non-nil=: 6
-  - Else if your =system-type= is =windows-nt= AND returned value by =(def)=
+  1. If your =system-name= is "MY-PC-NAME1": 1
+  2. Else if your system-name is "MY-PC-NAME2": 2
+  3. Else if your system-name is "MY-PC-NAME3": 3
+  4. Else if your =system-type= is =winodows-nt=: 4
+  5. Else if returned value by =(something) (bar)= is =non-nil=: 5
+  6. Else if =(featurep 'baz)= is =non-nil=: 6
+  7. Else if your =system-type= is =windows-nt= AND returned value by =(def)=
     is =non-nil=: 7
-  - Else if your system-name is "MY-PC-NAME4" OR your =system-type=
+  8. Else if your system-name is "MY-PC-NAME4" OR your =system-type=
     is =gnu/linux=: 8
-  - If all of =separators= are invalid: 0
+  9. If all of =separators= are invalid: 0
 * Separator
   - =separator= means object which can separate system environment.
   - =separator= can be list, symbol, number or string.
@@ -45,7 +45,7 @@
      - =cdr= of the list is argument. See [[Keywords][Keywords Section]].
    - The other type is:
      - Don't have keyword in the =car=. This is put =:separators= keyword
-       automatically. See [[:separators/:alias/:or][:separator Section]].
+       automatically. See [[=:separators= / =:alias= / =:or=][:separator Section]].
 ** Symbol
    - This is interpreted as =separator= defined in =separate-separator-alist=,
    or system-type (same as =:os= keyword). See [[=separate-separator-alist=][separate-separator-alist Section]].
@@ -53,31 +53,31 @@
      only when all of other =seprators= are invalid.
 ** Number
    This is interpreted as has =:emacs-version>== keyword.
-   See [[:emacs-version>=][:emacs-version>= Section]].
+   See [[=:emacs-version>==][:emacs-version>= Section]].
 ** String
    This is interpreted as has =:system-name= keyword.
-   See [[:system-name][:system-name Section]].
+   See [[=:system-name=][:system-name Section]].
 * Keywords
-** :system-name
+** =:system-name=
    - This keyword accept multiple argument of =string=. if at least one of
      argument is same as system-name, this =separator= is valid.
-** :separators/:alias/:or
+** =:separators= / =:alias= / =:or=
    - These keywords accept multiple arguments of =separator=. If at least one
      of =separators= of arguments is valid, this =separator= is valid.
-** :and
+** =:and=
    - These keywords accept multiple arguments of =separator=. If all
      =separators= of arguments are valid, this =separator= is valid.
-** :emacs-version>=
+** =:emacs-version>==
    - This keyword accept 1 or 2 argument(s) of number. First argument is =M=,
      and second argument (optional) is =m=. If emacs version is same or higher
      than =M.m=, this =separator= is valid.
-** :eval
+** =:eval=
    - This keyword accept multiple arguments of S expression. If returned value
      of those S expression is =non-nil=, this =separator= is valid.
-** :os
+** =:os=
    - This keyword accept multiple arguments of symbol. If one of arguments is
      same as =system-type=, this =separator= is valid.
-** :package-available
+** =:package-available=
    - This keyword accept multiple argument of feature (symbol). If all arguments
      are returned =non-nil= when passed to =featurep=, this =separator=
      is valid.
