@@ -5,9 +5,11 @@
 ;; Author: ROCKTAKEY <rocktakey@gmail.com>
 ;; Keywords: tools
 
+;; URL: https://github.com/ROCKTAKEY/pc-separate
+
 ;; Package-Requires: ((cl-lib "1.0") (emacs "26.4"))
 
-;; Version: 0.0.1
+;; Version: 0.0.2
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -223,12 +225,12 @@ trapped before applied this variable to.")
              (cdr separator)))))
 
 
-
 ;;;###autoload
-(defmacro separate-set (variable alist)
+(defmacro separate-set-no-eval (variable alist)
   "Set value of VARIABLE to VALUE each system.
 each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
 if (separate-current-separator-p SEPARATOR) return non-nil.
+VALUE is NOT evaluated.
 
 \(fn VARIABLE ((SEPARATOR . VALUE)...))"
   (let ((valid-cons (gensym "valid-cons"))
@@ -257,11 +259,58 @@ if (separate-current-separator-p SEPARATOR) return non-nil.
        ,valid-cons)))
 
 ;;;###autoload
+(defmacro separate-setq-no-eval (variable alist)
+  "Set value of VARIABLE to VALUE each system.
+each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
+if (separate-current-separator-p SEPARATOR) return non-nil.
+variable have to be non-quoted.
+VALUE is NOT evaluated.
+
+\(fn VARIABLE ((SEPARATOR . VALUE)...))"
+  `(separate-set-no-eval (quote ,variable) ,alist))
+
+
+
+;;;###autoload
+(defmacro separate-set (variable alist)
+  "Set value of VARIABLE to VALUE each system.
+each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
+if (separate-current-separator-p SEPARATOR) return non-nil.
+VALUE is evaluated.
+
+\(fn VARIABLE ((SEPARATOR . VALUE)...))"
+  (let ((valid-cons (gensym "valid-cons"))
+        (separator (gensym "separator"))
+        (value (gensym "value"))
+        (default (gensym "default"))
+        )
+    ;; throw error if ALIST is NOT both alist and symbol.
+    (ignore (cl-loop for (x . y) in alist))
+    `(let (,valid-cons (,default nil))
+       (setq ,valid-cons
+             (cl-loop
+              for (,separator . ,value) in ',alist
+              if (eq ,separator 'default)
+              do (setq ,default (cons ,separator ,value))
+              else if (separate--current-separator-p ,separator)
+              return (cons ,separator ,value)
+              end
+              ;; If never eval "return form", return default
+              ;; which is nil if no "default" separator.
+              finally return ,default
+              ))
+       ;; If no valid-cons, return nil because of `when' macro.
+       (when ,valid-cons
+         (set ,variable (eval (cdr ,valid-cons))))
+       ,valid-cons)))
+
+;;;###autoload
 (defmacro separate-setq (variable alist)
   "Set value of VARIABLE to VALUE each system.
 each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
 if (separate-current-separator-p SEPARATOR) return non-nil.
 variable have to be non-quoted.
+VALUE is evaluated.
 
 \(fn VARIABLE ((SEPARATOR . VALUE)...))"
   `(separate-set (quote ,variable) ,alist))
@@ -275,7 +324,7 @@ if (separate-current-separator-p SEPARATOR) return non-nil.
 \(fn (SEPARATOR BODY...)...)"
   (let ((c (gensym)))
     `(let (,c)
-       (separate-setq ,c ,clauses)
+       (separate-setq-no-eval ,c ,clauses)
        (eval (cons 'progn ,c)))))
 
 (provide 'separate)
