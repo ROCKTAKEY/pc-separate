@@ -97,7 +97,7 @@
 #+END_SRC
 ** Number
    This is interpreted as has =:emacs-version>== keyword.
-   See [[=:emacs-version>==][emacs-version Section]].
+   See [[#emacs-version][emacs-version Section]].
 ** String
    This is interpreted as has =:system-name= keyword.
    See [[=:system-name=][system-name Section]].
@@ -128,6 +128,9 @@
   ))
 #+END_SRC
 ** =:emacs-version>==
+   :PROPERTIES:
+   :CUSTOM_ID: emacs-version
+   :END:
    - This keyword accept 1 or 2 argument(s) of number. First argument is =M=,
      and second argument (optional) is =m=. If emacs version is same or higher
      than =M.m=, this =separator= is valid.
