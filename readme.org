@@ -265,17 +265,22 @@
 * Macros
 ** =separate-set (variable alist)=
    - Set value of =VARIABLE= depend on =SEPARATOR= below.
-   - Each element of =ALIST= is =(SEPARATOR . VALUE)=, and =VARIABLE= is set to =VALUE=
+   - Each element of =ALIST= is =(SEPARATOR . VALUE)=,
+     and =VARIABLE= is set to =VALUE=
      if =SEPARATOR= is valid.
-   - If there are some cons cells whose car (= =SEPARATOR=) is valid, upstream element
-     is used, and rest of them is not evaluated.
-   - in the cons cell whose =SEPARATOR= is =default=, its =VALUE= is used only when any
-     other =SEPARATOR= isn't valid.
+   - If there are some cons cells whose car (= =SEPARATOR=) is valid,
+     upstream element is used, and rest of them is not evaluated.
+   - in the cons cell whose =SEPARATOR= is =default=,
+     its =VALUE= is used only when any other =SEPARATOR= isn't valid.
    - =(separate-set 'a ((b . c) ...))= is absolutely same as
      =(separate-setq a ((b . c) ...))=.
 ** =separate-setq (variable alist)=
-   - Same as separate-set, but =VARIABLE= doesn't have to be quoted.
+   - Same as =separate-set=, but =VARIABLE= doesn't have to be quoted.
    - See [[How to Use?][How to Use Section]] as example.
+** =separate-set-no-eval (variable alist)=
+   - Same as =separate-set-no-eval=, but =VALUE= are NOT evalueted.
+** =separate-setq-no-eval (variable alist)=
+   - Same as =separate-setq-no-eval=, but =VALUE= are NOT evalueted.
 ** =separate-cond (&body clauses)=
    - Similar to =cond=, but use =SEPARATOR= instead of =CANDICATE=.
      If =SEPARATOR= is valid, evaluate =BODY=.
@@ -310,10 +315,9 @@
   5. Else if returned value by =(something) (bar)= is =non-nil=: 5
   6. Else if =(featurep 'baz)= is =non-nil=: 6
   7. Else if your =system-type= is =windows-nt= AND returned value by =(def)=
-    is =non-nil=: 7
+     is =non-nil=: 7
   8. Else if your system-name is "MY-PC-NAME4" OR your =system-type=
-    is =gnu/linux=: 8
+     is =gnu/linux=: 8
   9. If all of =separators= are invalid: 0
-
 * License
   This package is licensed by GPLv3. See [[file:LICENSE][LICENSE]].
