@@ -53,7 +53,7 @@
      - =cdr= of the list is argument. See [[Keywords][Keywords Section]].
    - The other type is:
      - Don't have keyword in the =car=. This is put =:separators= keyword
-       automatically. See [[*=:separators= / =:alias= / =:or=][:separator Section]].
+       automatically. See [[#separators][:separator Section]].
 ** Symbol
    - This is interpreted as =separator= defined in =separate-separator-alist=,
    or system-type (same as =:os= keyword). See [[=separate-separator-alist=][separate-separator-alist Section]].
