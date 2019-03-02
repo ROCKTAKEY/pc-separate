@@ -3,17 +3,23 @@
   =separate= provide function that help you to separate setting
   by system environment, such as system-name given by =(system-name)=,
   Emacs version, OS, and so on.
-* Example
+* How to Use?
+  Set your definition of separator into =separate-separator-alist= (optional),
+  and use =separate-setq= or =separate-cond=.
+  See also [[Separator][Separator Section]] and [[Keywords][Keywords Section]].
 #+BEGIN_SRC emacs-lisp -n
-  ;; Define some separator.
+  ;; Define some separator. This is optional.
+  ;; If you define this, you can use symbol as separator(like condicate).
   (setq separate-separator-alist
-        '((pc-name1 . "MY-PC-NAME1")
+        '(;; (symbol . separator)
+          (pc-name1 . "MY-PC-NAME1")
           (pc-name2 . "MY-PC-NAME2")
           (my-candicate . (:eval (abc)))
           ))
 
   (separate-setq foo
-     ((pc-name1      . 1)
+    (;; (separator . value)
+     (pc-name1      . 1)
      (pc-name2      . 2)
      ("MY-PC-NAME3" . 3)
      (windows-nt    . 4)
@@ -24,17 +30,17 @@
      (default . 0)))
 #+END_SRC
   Value of =foo= is set to:
-  - If your =system-name= is "MY-PC-NAME1": 1
-  - Else if your system-name is "MY-PC-NAME2": 2
-  - Else if your system-name is "MY-PC-NAME3": 3
-  - Else if your =system-type= is =winodows-nt=: 4
-  - Else if returned value by =(something) (bar)= is =non-nil=: 5
-  - Else if =(featurep 'baz)= is =non-nil=: 6
-  - Else if your =system-type= is =windows-nt= AND returned value by =(def)=
+  1. If your =system-name= is "MY-PC-NAME1": 1
+  2. Else if your system-name is "MY-PC-NAME2": 2
+  3. Else if your system-name is "MY-PC-NAME3": 3
+  4. Else if your =system-type= is =winodows-nt=: 4
+  5. Else if returned value by =(something) (bar)= is =non-nil=: 5
+  6. Else if =(featurep 'baz)= is =non-nil=: 6
+  7. Else if your =system-type= is =windows-nt= AND returned value by =(def)=
     is =non-nil=: 7
-  - Else if your system-name is "MY-PC-NAME4" OR your =system-type=
+  8. Else if your system-name is "MY-PC-NAME4" OR your =system-type=
     is =gnu/linux=: 8
-  - If all of =separators= are invalid: 0
+  9. If all of =separators= are invalid: 0
 * Separator
   - =separator= means object which can separate system environment.
   - =separator= can be list, symbol, number or string.
@@ -45,47 +51,215 @@
      - =cdr= of the list is argument. See [[Keywords][Keywords Section]].
    - The other type is:
      - Don't have keyword in the =car=. This is put =:separators= keyword
-       automatically. See [[:separators/:alias/:or][:separator Section]].
+       automatically. See [[=:separators= / =:alias= / =:or=][:separator Section]].
 ** Symbol
    - This is interpreted as =separator= defined in =separate-separator-alist=,
    or system-type (same as =:os= keyword). See [[=separate-separator-alist=][separate-separator-alist Section]].
    - the symbol =default= is special symbol. Element including this is evaluated
      only when all of other =seprators= are invalid.
+#+BEGIN_SRC emacs-lisp -n
+  ;;Define symbol separator.
+  (setq separate-separator-alist
+   '(
+     ;; This separator means "if `system-name' is "my-windows",".
+     ;; See also String Section and :system-name Section.
+     (my-win   . "my-windows")
+
+     ;; This separator means "if `system-type' is `gnu/linux' and
+     ;; if `system-name' is "MY-PC,". See also String Section and
+     ;; :and Section.
+     (my-linux . (:and gnu/linux "MY-PC"))
+
+     ;; You can make alias of symbol sparator.
+     (my-l . my-linux)
+   ))
+
+  (separate-setq foo
+   (
+    ;; If `system-name' is "my-windows", `foo' is set to 1.
+    (my-win . 1)
+    ;; If `system-type' is `gnu/linux' and if `system-name' is "MY-PC,
+    ;; `foo' is set to 2.
+    (my-linux . 2)
+    ;; Otherwise, `foo' is set to 3.
+    (default . 3)
+    ))
+
+  ;; below is absolutely same as above.
+  (separate-setq foo
+   (
+    (my-win . 1)
+    (default . 3)                         ; You can write default anywhere.
+    (my-linux . 2)
+    ))
+#+END_SRC
 ** Number
    This is interpreted as has =:emacs-version>== keyword.
-   See [[:emacs-version>=][:emacs-version>= Section]].
+   See [[=:emacs-version>==][:emacs-version>= Section]].
 ** String
    This is interpreted as has =:system-name= keyword.
-   See [[:system-name][:system-name Section]].
+   See [[=:system-name=][:system-name Section]].
 * Keywords
-** :system-name
+** =:system-name=
    - This keyword accept multiple argument of =string=. if at least one of
      argument is same as system-name, this =separator= is valid.
-** :separators/:alias/:or
-   - These keywords accept multiple arguments of =separator=. If at least one
-     of =separators= of arguments is valid, this =separator= is valid.
-** :and
-   - These keywords accept multiple arguments of =separator=. If all
-     =separators= of arguments are valid, this =separator= is valid.
-** :emacs-version>=
+   - Keyword =:system-name= is optional.
+#+BEGIN_SRC emacs-lisp -n
+  (separate-setq foo
+    (;; (separator . value)
+
+    ;; if system-name is "MY-PC-1", `foo' is
+    ;; set to 1
+    ((:system-name "MY-PC-1") . 1)
+
+    ;; :system-name is optional.
+    ;; So This is same as ((:system-name "MY-PC-2") . 2)
+    ("MY-PC-2" . 2)
+
+    ;; you can put multiple argument.
+    ;; If system-name is either "MY-PC-3" or "MY-PC-4",
+    ;; `foo' is set to 3
+    ((:system-name "MY-PC-3" "MY-PC-4") . 3)
+
+    ;; :system-name is optional even when multiple argument.
+    (("MY-PC-6" "MY-PC-7" "MY-PC-8") . 4)
+  ))
+#+END_SRC
+** =:emacs-version>==
    - This keyword accept 1 or 2 argument(s) of number. First argument is =M=,
      and second argument (optional) is =m=. If emacs version is same or higher
      than =M.m=, this =separator= is valid.
-** :eval
+   - If you use only first argument, you can write number of major-version as separator.
+#+BEGIN_SRC emacs-lisp -n
+  (separate-setq foo
+    (
+     ;; If emacs version is 25.3 or higher, `foo' is set to 1
+     ((:emacs-version>= 25 3) . 1)
+
+     ;; If emacs version is 25(.0) or higher, `foo' is set to 2
+     ((:emacs-version>= 25) . 2)
+
+     ;; Same as previous one.
+     (25 . 2)
+     ))
+#+END_SRC
+** =:eval=
    - This keyword accept multiple arguments of S expression. If returned value
      of those S expression is =non-nil=, this =separator= is valid.
-** :os
+#+BEGIN_SRC emacs-lisp -n
+  (separate-setq foo
+     (
+      ;; If system-name include the string "WIN",
+      ;; `foo' is set to 1
+      ((:eval (string-match "WIN" (system-name))) . 1)
+
+      ;; multiple S expressions is permitted.
+      ;; If `(progn (bar) (baz))' return t, `foo' is set to 5
+      ((:eval (bar) (baz)) . 5)
+
+      ;; This is similar to `(default . 2)', but in this case,
+      ;; cons-cells below this one will NOT seen, while all cons-cells
+      ;; are seen in case of "default".
+      ((:eval t) . 2)
+
+      ;; This cons-cell is not seen. In the other words, `foo' is never set
+      ;; to 3.
+      ("SOME-PC" . 3)
+     ))
+#+END_SRC
+** =:os=
    - This keyword accept multiple arguments of symbol. If one of arguments is
-     same as =system-type=, this =separator= is valid.
-** :package-available
+     same as =system-type=, this =separator= is valid. See also emacs help of
+     =system-type=, and [[=:separators= / =:alias= / =:or=][:separators Section]].
+   - Keyword =:os= is optional.
+#+BEGIN_SRC emacs-lisp -n
+  (separate-setq foo
+  (
+   ;; If OS is Windows, `foo' is set to 1.
+   ((:os windos-nt) . 1)
+
+   ;; multiple arguments is permitted.
+   ;; If OS is either GNU/Linux or Cygwin (even not OS),
+   ;; `foo' is set to 2.
+   ((:os gnu/linux cygwin) . 2)
+
+   ;; their symbols of `system-type' can be used as symbol separator defined in
+   ;; `separate-separator-alist'. So you can write this instead of above.
+   ;; See also :separators Seciton.
+   ((gnu/linux cygwin) . 2)
+  ))
+#+END_SRC
+** =:package-available=
    - This keyword accept multiple argument of feature (symbol). If all arguments
      are returned =non-nil= when passed to =featurep=, this =separator=
      is valid.
+#+BEGIN_SRC emacs-lisp -n
+  (separate-setq foo
+   (
+    ;; If cl-lib is provided (meaning `(featurep 'cl-lib)' return t),
+    ;; `foo' is set to 1
+    ((:package-available cl-lib) . 1)
+
+    ;; Multiple arguments are permitted.
+    ;; Only if `helm', `company', and `ido' is all provided,
+    ;; `foo' is set to 2.
+    ((:package-available helm company ido) . 2)
+   ))
+#+END_SRC
+** =:separators= / =:alias= / =:or=
+   - These keywords accept multiple arguments of =separator=. If at least one
+     of =separators= of arguments is valid, this =separator= is valid.
+   - those keywords are optional.
+#+BEGIN_SRC emacs-lisp -n
+  (separate-setq foo
+    (;; (separator . value)
+
+    ;; if system-name is "MY-PC-1" or "MY-PC-2", or if system-type
+    ;; is `windows-nt', `foo' is set to 1.
+    ((:separators                         ; This can be `:or' or `:alias'
+      (:system-name "MY-PC-1")
+      "MY-PC-2"
+      windows-nt)
+      . 1)
+
+    ;; You can use this keyword with all separator.
+    ;; If cl-lib and ido is all provided, or if `bar' is a function,
+    ;; `foo' is set to 2.
+    ((:or
+     (:package-available cl-lib ido)
+     (:eval (functionp 'bar)))
+     . 2)
+  ))
+#+END_SRC
+** =:and=
+   - These keywords accept multiple arguments of =separator=. If all
+     =separators= of arguments are valid, this =separator= is valid.
+#+BEGIN_SRC emacs-lisp -n
+  (separate-setq foo
+      (;; (separator . value)
+
+      ;; if system-name is "MY-PC-1", AND if system-type is `windows-nt',
+      ;; `foo' is set to 1.
+      ((:and
+        (:system-name "MY-PC-1")
+        windows-nt)
+        . 1)
+
+      ;; You can use this keyword with all separator.
+      ;; If cl-lib and ido is all provided, AND if `bar' is a function,
+      ;; `foo' is set to 2.
+      ((:or
+       (:package-available cl-lib ido)
+       (:eval (functionp 'bar)))
+       . 2)
+    ))
+#+END_SRC
 * Variables
 ** =separate-separator-alist=
    - An associated list. Each element is cons cell,
      =(symbol . separator)=. In this package, you can use the =symbol=
      as the =separator=.
+   - See also [[How to Use?][How to Use Section]]
    - In the future, we will provide some functions to define =symbol-separator=
      like this.
 * Macros
@@ -97,11 +271,49 @@
      is used, and rest of them is not evaluated.
    - in the cons cell whose =SEPARATOR= is =default=, its =VALUE= is used only when any
      other =SEPARATOR= isn't valid.
+   - =(separate-set 'a ((b . c) ...))= is absolutely same as
+     =(separate-setq a ((b . c) ...))=.
 ** =separate-setq (variable alist)=
-   Same as separate-set, but =VARIABLE= doesn't have to be quoted.
+   - Same as separate-set, but =VARIABLE= doesn't have to be quoted.
+   - See [[How to Use?][How to Use Section]] as example.
 ** =separate-cond (&body clauses)=
    - Similar to =cond=, but use =SEPARATOR= instead of =CANDICATE=.
      If =SEPARATOR= is valid, evaluate =BODY=.
    - Priority of each clause is same as =separate-set=.
+#+BEGIN_SRC emacs-lisp -n
+  ;; Define some separator. This is optional.
+  ;; If you define this, you can use symbol as separator(like condicate).
+  (setq separate-separator-alist
+        '(;; (symbol . separator)
+          (pc-name1 . "MY-PC-NAME1")
+          (pc-name2 . "MY-PC-NAME2")
+          (my-candicate . (:eval (abc)))
+          ))
+
+  (separate-cond
+    ;; (separator . value)
+     (pc-name1       1)
+     (pc-name2       2)
+     ("MY-PC-NAME3"  3)
+     (windows-nt     4)
+     ((:eval (something) (bar))       5)
+     ((:package-available 'baz)       6)
+     ((:and windows-nt (:eval (def))) 7)
+     ((:separators "MY-PC-NAME4" gnu/linux) 8)
+     (default 0))
+#+END_SRC
+  The latter S expression returns:
+  1. If your =system-name= is "MY-PC-NAME1": 1
+  2. Else if your system-name is "MY-PC-NAME2": 2
+  3. Else if your system-name is "MY-PC-NAME3": 3
+  4. Else if your =system-type= is =winodows-nt=: 4
+  5. Else if returned value by =(something) (bar)= is =non-nil=: 5
+  6. Else if =(featurep 'baz)= is =non-nil=: 6
+  7. Else if your =system-type= is =windows-nt= AND returned value by =(def)=
+    is =non-nil=: 7
+  8. Else if your system-name is "MY-PC-NAME4" OR your =system-type=
+    is =gnu/linux=: 8
+  9. If all of =separators= are invalid: 0
+
 * License
   This package is licensed by GPLv3. See [[file:LICENSE][LICENSE]].
