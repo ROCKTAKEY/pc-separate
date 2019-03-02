@@ -6,6 +6,9 @@
   by system environment, such as system-name given by =(system-name)=,
   Emacs version, OS, and so on.
 * How to Use?
+  :PROPERTIES:
+  :CUSTOM_ID: HowToUse
+  :END:
   Set your definition of separator into =separate-separator-alist= (optional),
   and use =separate-setq= or =separate-cond=.
   See also [[Separator][Separator Section]] and [[Keywords][Keywords Section]].
@@ -56,7 +59,7 @@
        automatically. See [[#separators][separators Section]].
 ** Symbol
    - This is interpreted as =separator= defined in =separate-separator-alist=,
-   or system-type (same as =:os= keyword). See [[=separate-separator-alist=][separate-separator-alist Section]].
+   or system-type (same as =:os= keyword). See [[#separate-separator-alist][separate-separator-alist Section]].
    - the symbol =default= is special symbol. Element including this is evaluated
      only when all of other =seprators= are invalid.
 #+BEGIN_SRC emacs-lisp -n
@@ -100,9 +103,12 @@
    See [[#emacs-version][emacs-version Section]].
 ** String
    This is interpreted as has =:system-name= keyword.
-   See [[=:system-name=][system-name Section]].
+   See [[#system-name][system-name Section]].
 * Keywords
 ** =:system-name=
+   :PROPERTIES:
+   :CUSTOM_ID: system-name
+   :END:
    - This keyword accept multiple argument of =string=. if at least one of
      argument is same as system-name, this =separator= is valid.
    - Keyword =:system-name= is optional.
@@ -175,7 +181,7 @@
 ** =:os=
    - This keyword accept multiple arguments of symbol. If one of arguments is
      same as =system-type=, this =separator= is valid. See also emacs help of
-     =system-type=, and [[#separators][:separators Section]].
+     =system-type=, and [[#separators][separators Section]].
    - Keyword =:os= is optional.
 #+BEGIN_SRC emacs-lisp -n
   (separate-setq foo
@@ -264,10 +270,13 @@
 #+END_SRC
 * Variables
 ** =separate-separator-alist=
+   :PROPERTIES:
+   :CUSTOM_ID: separate-separator-alist
+   :END:
    - An associated list. Each element is cons cell,
      =(symbol . separator)=. In this package, you can use the =symbol=
      as the =separator=.
-   - See also [[How to Use?][How to Use Section]]
+   - See also [[#HowToUse][How to Use Section]]
    - In the future, we will provide some functions to define =symbol-separator=
      like this.
 * Macros
@@ -284,7 +293,7 @@
      =(separate-setq a ((b . c) ...))=.
 ** =separate-setq (variable alist)=
    - Same as =separate-set=, but =VARIABLE= doesn't have to be quoted.
-   - See [[How to Use?][How to Use Section]] as example.
+   - See [[#HowToUse][How to Use Section]] as example.
 ** =separate-set-no-eval (variable alist)=
    - Same as =separate-set-no-eval=, but =VALUE= are NOT evalueted.
 ** =separate-setq-no-eval (variable alist)=
