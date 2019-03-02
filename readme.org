@@ -282,7 +282,7 @@
    - An associated list. Each element is cons cell,
      =(symbol . separator)=. In this package, you can use the =symbol=
      as the =separator=.
-   - See also [[#HowToUse][How to Use Section]]
+   - See also [[#HowToUse][How to Use Section]] as example.
    - In the future, we will provide some functions to define =symbol-separator=
      like this.
 * Macros
