@@ -1,4 +1,5 @@
-#+TITLE: separate
+[[https://github.com/ROCKTAKEY/pc-separate][https://img.shields.io/github/tag/ROCKTAKEY/separate.el.svg?style=flat-square]]
+[[file:LICENSE][https://img.shields.io/github/license/ROCKTAKEY/separate.el.svg?style=flat-square]]
 * Change action by system environment
   =separate= provide function that help you to separate setting
   by system environment, such as system-name given by =(system-name)=,
