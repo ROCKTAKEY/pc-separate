@@ -8,7 +8,7 @@ env:
 
 install:
   - curl -LO https://github.com/npostavs/emacs-travis/releases/download/bins/emacs-bin-${EMACS_VERSION}.tar.gz
-    - tar -xaf emacs-bin-${EMACS_VERSION}.tar.gz -C /
-    - export EMACS=/tmp/emacs/bin/emacs
+  - tar -xaf emacs-bin-${EMACS_VERSION}.tar.gz -C /
+  - export EMACS=/tmp/emacs/bin/emacs
 script:
   make travis
