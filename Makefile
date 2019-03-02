@@ -1,6 +1,6 @@
 EMACS ?= emacs
-TESTINGFILE ?= separate-test.el
-TESTEDFILES ?= separate.el
+TESTINGFILE := separate-test.el
+TESTEDFILES := separate.el
 
 test:
 	${EMACS} -batch -Q -L . -l ${TESTINGFILE} -f  ert-run-tests-batch-and-exit
