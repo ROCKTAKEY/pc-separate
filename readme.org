@@ -1,5 +1,5 @@
-[[https://github.com/ROCKTAKEY/pc-separate][https://img.shields.io/github/tag/ROCKTAKEY/separate.el.svg?style=flat-square]]
-[[file:LICENSE][https://img.shields.io/github/license/ROCKTAKEY/separate.el.svg?style=flat-square]]
+[[https://github.com/ROCKTAKEY/pc-separate][https://img.shields.io/github/tag/ROCKTAKEY/pc-separate.svg?style=flat-square]]
+[[file:LICENSE][https://img.shields.io/github/license/ROCKTAKEY/pc-separate.svg?style=flat-square]]
 [[https://travis-ci.org/ROCKTAKEY/pc-separate/][https://img.shields.io/travis/ROCKTAKEY/pc-separate/master.svg?style=flat-square]]
 * Change action by system environment
   =separate= provide function that help you to separate setting
