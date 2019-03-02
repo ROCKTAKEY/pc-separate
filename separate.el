@@ -5,9 +5,11 @@
 ;; Author: ROCKTAKEY <rocktakey@gmail.com>
 ;; Keywords: tools
 
+;; URL: https://github.com/ROCKTAKEY/pc-separate
+
 ;; Package-Requires: ((cl-lib "1.0") (emacs "26.4"))
 
-;; Version: 0.0.1
+;; Version: 0.0.2
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

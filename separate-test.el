@@ -70,7 +70,7 @@
   )
 
 (ert-deftest separate--package-available ()
-  (should     (separate--package-available '(cl-lib separate dired)))
+  (should     (separate--package-available '(cl-lib separate)))
   (should-not (separate--package-available '(cl-lib not-defined-feature))))
 
 
