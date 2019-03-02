@@ -53,7 +53,7 @@
      - =cdr= of the list is argument. See [[Keywords][Keywords Section]].
    - The other type is:
      - Don't have keyword in the =car=. This is put =:separators= keyword
-       automatically. See [[#separators][:separator Section]].
+       automatically. See [[#separators][separators Section]].
 ** Symbol
    - This is interpreted as =separator= defined in =separate-separator-alist=,
    or system-type (same as =:os= keyword). See [[=separate-separator-alist=][separate-separator-alist Section]].
@@ -97,10 +97,10 @@
 #+END_SRC
 ** Number
    This is interpreted as has =:emacs-version>== keyword.
-   See [[=:emacs-version>==][:emacs-version>= Section]].
+   See [[=:emacs-version>==][emacs-version>= Section]].
 ** String
    This is interpreted as has =:system-name= keyword.
-   See [[=:system-name=][:system-name Section]].
+   See [[=:system-name=][system-name Section]].
 * Keywords
 ** =:system-name=
    - This keyword accept multiple argument of =string=. if at least one of
