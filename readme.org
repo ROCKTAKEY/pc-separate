@@ -11,7 +11,7 @@
   :END:
   Set your definition of separator into =separate-separator-alist= (optional),
   and use =separate-setq= or =separate-cond=.
-  See also [[*Separator][Separator Section]] and [[*Keywords][Keywords Section]].
+  See also [[#Separator][Separator Section]] and [[#Keywords][Keywords Section]].
 #+BEGIN_SRC emacs-lisp -n
   ;; Define some separator. This is optional.
   ;; If you define this, you can use symbol as separator(like condicate).
@@ -47,13 +47,16 @@
     is =gnu/linux=: 8
   9. If all of =separators= are invalid: 0
 * Separator
+  :PROPERTIES:
+  :CUSTOM_ID: Separator
+  :END:
   - =separator= means object which can separate system environment.
   - =separator= can be list, symbol, number or string.
 ** List
    - There are 2 types of listed-separator.
    - One type is:
      - Have keyword in the =car=. All keywords start ":".
-     - =cdr= of the list is argument. See [[*Keywords][Keywords Section]].
+     - =cdr= of the list is argument. See [[#Keywords][Keywords Section]].
    - The other type is:
      - Don't have keyword in the =car=. This is put =:separators= keyword
        automatically. See [[#separators][separators Section]].
@@ -105,6 +108,9 @@
    This is interpreted as has =:system-name= keyword.
    See [[#system-name][system-name Section]].
 * Keywords
+  :PROPERTIES:
+  :CUSTOM_ID: Keywords
+  :END:
 ** =:system-name=
    :PROPERTIES:
    :CUSTOM_ID: system-name
