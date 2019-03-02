@@ -97,7 +97,7 @@
 #+END_SRC
 ** Number
    This is interpreted as has =:emacs-version>== keyword.
-   See [[=:emacs-version>==][emacs-version>= Section]].
+   See [[=:emacs-version>==][emacs-version Section]].
 ** String
    This is interpreted as has =:system-name= keyword.
    See [[=:system-name=][system-name Section]].
