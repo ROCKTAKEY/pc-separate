@@ -3,17 +3,23 @@
   =separate= provide function that help you to separate setting
   by system environment, such as system-name given by =(system-name)=,
   Emacs version, OS, and so on.
-* Example
+* How to Use?
+  Set your definition of separator into =separate-separator-alist= (optional),
+  and use =separate-setq= or =separate-cond=.
+  See also [[Separator][Separator Section]] and [[Keywords][Keywords Section]].
 #+BEGIN_SRC emacs-lisp -n
-  ;; Define some separator.
+  ;; Define some separator. This is optional.
+  ;; If you define this, you can use symbol as separator(like condicate).
   (setq separate-separator-alist
-        '((pc-name1 . "MY-PC-NAME1")
+        '(;; (symbol . separator)
+          (pc-name1 . "MY-PC-NAME1")
           (pc-name2 . "MY-PC-NAME2")
           (my-candicate . (:eval (abc)))
           ))
 
   (separate-setq foo
-    ((pc-name1      . 1)
+    (;; (separator . value)
+     (pc-name1      . 1)
      (pc-name2      . 2)
      ("MY-PC-NAME3" . 3)
      (windows-nt    . 4)
@@ -61,6 +67,7 @@
 ** =:system-name=
    - This keyword accept multiple argument of =string=. if at least one of
      argument is same as system-name, this =separator= is valid.
+   -
 ** =:separators= / =:alias= / =:or=
    - These keywords accept multiple arguments of =separator=. If at least one
      of =separators= of arguments is valid, this =separator= is valid.
