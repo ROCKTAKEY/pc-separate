@@ -253,7 +253,7 @@ if (separate-current-separator-p SEPARATOR) return non-nil.
               ))
        ;; If no valid-cons, return nil because of `when' macro.
        (when ,valid-cons
-         (set ,variable (cdr ,valid-cons)))
+         (set ,variable (eval (cdr ,valid-cons))))
        ,valid-cons)))
 
 ;;;###autoload
