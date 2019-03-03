@@ -7,9 +7,9 @@
 
 ;; URL: https://github.com/ROCKTAKEY/pc-separate
 
-;; Package-Requires: ((cl-lib "1.0") (emacs "26.4"))
+;; Package-Requires: ((cl-lib "0.6.1") (emacs "24.3"))
 
-;; Version: 0.0.2
+;; Version: 0.0.3
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -29,27 +29,29 @@
 ;; * Change action by pc system
 ;;   "separate" provide function that help you to separate setting
 ;;   by system name given by "(system-name)".
-;; * Words
-;;   -  "separator" means system-name or symbol which is defined in
-;;      `separate-system-alist'.
-;; * Variables
-;; ** `separate-system-alist'
-;;    an associated list. Each element is cons cell,
-;;    "(system-name . number-or-symbol)". in this package, you can use
-;;    "number-or-symbol" as "separator" instead of "system-name".
 ;; * Macros
-;; ** "`separate-set' (variable alist)
-;;   - Set value of "VARIABLE" depend on "SEPARATOR".
-;;   - Each element of "ALIST" is "(SEPARATOR . VALUE)", and "VARIABLE" is
-;;     set to "VALUE" if "SEPARATOR" accords current system.
-;;   - If there are some cons cells whose car accords current system,
-;;     "number-or-symbol" defined on upper stream in "separate-system-alist"
-;;     is used. System-name is the lowest priority.
-;;   - in the cons cell whose "SEPARATOR" is "default", its "VALUE" is used only
-;;     when any other "SEPARATOR" doesn't accord current system.
-;; ** `separate-setq' (variable alist)
-;;    Same as separate-set, but "VARIABLE" doesn't have to be quoted.
-
+;; ** =separate-set (variable alist)=
+;;   - Set value of =VARIABLE= depend on =SEPARATOR= below.
+;;   - Each element of =ALIST= is =(SEPARATOR . VALUE)=,
+;;     and =VARIABLE= is set to =VALUE=
+;;     if =SEPARATOR= is valid.
+;;   - If there are some cons cells whose car (= =SEPARATOR=) is valid,
+;;     upstream element is used, and rest of them is not evaluated.
+;;   - in the cons cell whose =SEPARATOR= is =default=,
+;;     its =VALUE= is used only when any other =SEPARATOR= isn't valid.
+;;   - =(separate-set 'a ((b . c) ...))= is absolutely same as
+;;     =(separate-setq a ((b . c) ...))=.
+;; ** =separate-setq (variable alist)=
+;;   - Same as =separate-set=, but =VARIABLE= doesn't have to be quoted.
+;;   - See [[#HowToUse][How to Use Section]] as example.
+;; ** =separate-set-no-eval (variable alist)=
+;;   - Same as =separate-set-no-eval=, but =VALUE= are NOT evalueted.
+;; ** =separate-setq-no-eval (variable alist)=
+;;   - Same as =separate-setq-no-eval=, but =VALUE= are NOT evalueted.
+;; ** =separate-cond (&body clauses)=
+;;   - Similar to =cond=, but use =SEPARATOR= instead of =CANDICATE=.
+;;     If =SEPARATOR= is valid, evaluate =BODY=.
+;;   - Priority of each clause is same as =separate-set=.
 
 ;;; Code:
 
@@ -80,14 +82,16 @@ And you can use the number instead of system-name on separate."
     (:package-available   . separate--package-available)))
 
 (defun separate--system-name (args)
-  ""
+  "Return non-nil if ARGS contain value returned by function `system-name'."
   (separate--mapc-or
    (lambda (a) nil nil
      (string= a (system-name)))
    args))
 
 (defun separate--emacs-version>= (args)
-  ""
+  "Return non-nil if ARG is same as or higher than variable `emacs-version'.
+ARGS can have 1 or 2 element(s).  First is MAJOR, second is MINOR (optional).
+If MAJOR.MINOR is same and or higher than variable `emacs-version', return non-nil."
   (let ((major (car args))
         (minor (cadr args)))
     (or (> emacs-major-version major)
@@ -97,15 +101,15 @@ And you can use the number instead of system-name on separate."
   )
 
 (defun separate--separators (args)
-  ""
+  "Return non-nil if one of ARGS elements is a valid separator."
   (separate--mapc-or 'separate--current-separator-p args))
 
 (defun separate--and (args)
-  ""
+  "Return non-nil if all of ARGS elements are valid separator."
   (separate--mapc-and 'separate--current-separator-p args))
 
 (defun separate--os (args)
-  ""
+  "Return non-nil if one of ARGS elements is same as `system-type'."
   (separate--mapc-or
    (lambda (a) nil nil
      (eq a system-type))
@@ -113,21 +117,20 @@ And you can use the number instead of system-name on separate."
   )
 
 (defun separate--eval (args)
-  ""
+  "Return result of evaluating ARGS."
   (eval (cons 'progn args))
   )
 
 (defun separate--package-available (args)
-  ""
+  "Return non-nil if all of ARGS elements are return non-nil when passed to `featurep'."
   (separate--mapc-and 'featurep args)
   )
 
 
 
 (defun separate--function-assq (arg alist)
-  "Return VALUE if (apply FUNC ARG) returns t.
-
-\(fn ARG '((FUNC . VALUE)...))"
+  "Return VALUE if (apply FUNC ARG) return t.
+Each element of ALIST is (FUNC . VALUE)."
   (cl-loop
    for (x . y) in alist
    if (funcall x arg)
@@ -159,8 +162,7 @@ And you can use the number instead of system-name on separate."
   )
 
 (defun separate--assq (key alist)
-  "Same as assq, but if car of element of ALIST is list,
-  compare key to element of that, too."
+  "Same as assq, but if car of element of ALIST is list, compare KEY to element of that, too."
   (cl-loop
    for (x . y) in alist
    if (or (eq key x) (and (listp x) (memq key x)))
@@ -188,13 +190,13 @@ trapped before applied this variable to.")
          (string= ":" (substring (symbol-name c) 0 1)))))))
 
 (defun separate--symbol-separator-instance (symbol-separator)
-  ""
+  "Return instance of SYMBOL-SEPARATOR in `separate-separator-alist'."
   (cdr (assq symbol-separator separate-separator-alist))
   )
 
 (defun separate--separator-normalize (separator)
   "Normarize SEPARATOR.
-  Change SEPARATOR to be listed one whose car is :foobar."
+Change SEPARATOR to be listed one whose car is :foobar."
   (let ((hidden-kind
          (separate--function-assq separator separate--default-alist)))
     (cond
@@ -207,14 +209,14 @@ trapped before applied this variable to.")
     ))
 
 (defun separate--symbol-separator-current-p (symbol-separator)
-  ""
+  "Return non-nil if SYMBOL-SEPARATOR is valid separator."
   (or (separate--os (list symbol-separator))
       (separate--current-separator-p
        (separate--symbol-separator-instance symbol-separator)))
   )
 
 (defun separate--current-separator-p (separator)
-  "Return non-nil if SEPARATOR is representing current system."
+  "Return non-nil if SEPARATOR is valid separator."
   (cond
    ((null separator) nil)
    ((symbolp separator)
@@ -239,7 +241,6 @@ VALUE is NOT evaluated.
         (default (gensym "default"))
         )
     ;; throw error if ALIST is NOT both alist and symbol.
-    (ignore (cl-loop for (x . y) in alist))
     `(let (,valid-cons (,default nil))
        (setq ,valid-cons
              (cl-loop
@@ -284,8 +285,6 @@ VALUE is evaluated.
         (value (gensym "value"))
         (default (gensym "default"))
         )
-    ;; throw error if ALIST is NOT both alist and symbol.
-    (ignore (cl-loop for (x . y) in alist))
     `(let (,valid-cons (,default nil))
        (setq ,valid-cons
              (cl-loop
@@ -318,7 +317,7 @@ VALUE is evaluated.
 ;;;###autoload
 (defmacro separate-cond (&rest clauses)
   "Eval BODY if SEPARATOR accords current system.
-Each clause looks like (SEPARATOR BODY...). BODY is evaluate
+Each element of CLAUSES looks like (SEPARATOR BODY...).  BODY is evaluate
 if (separate-current-separator-p SEPARATOR) return non-nil.
 
 \(fn (SEPARATOR BODY...)...)"
