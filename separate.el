@@ -9,7 +9,7 @@
 
 ;; Package-Requires: ((cl-lib "0.6.1") (emacs "24.3"))
 
-;; Version: 0.0.2
+;; Version: 0.0.3
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -29,27 +29,29 @@
 ;; * Change action by pc system
 ;;   "separate" provide function that help you to separate setting
 ;;   by system name given by "(system-name)".
-;; * Words
-;;   -  "separator" means system-name or symbol which is defined in
-;;      `separate-system-alist'.
-;; * Variables
-;; ** `separate-system-alist'
-;;    an associated list.  Each element is cons cell,
-;;    "(system-name . number-or-symbol)".  in this package, you can use
-;;    "number-or-symbol" as "separator" instead of "system-name".
 ;; * Macros
-;; ** "`separate-set' (variable alist)
-;;   - Set value of "VARIABLE" depend on "SEPARATOR".
-;;   - Each element of "ALIST" is "(SEPARATOR . VALUE)", and "VARIABLE" is
-;;     set to "VALUE" if "SEPARATOR" accords current system.
-;;   - If there are some cons cells whose car accords current system,
-;;     "number-or-symbol" defined on upper stream in "separate-system-alist"
-;;     is used.  System-name is the lowest priority.
-;;   - in the cons cell whose "SEPARATOR" is "default", its "VALUE" is used only
-;;     when any other "SEPARATOR" doesn't accord current system.
-;; ** `separate-setq' (variable alist)
-;;    Same as separate-set, but "VARIABLE" doesn't have to be quoted.
-
+;; ** =separate-set (variable alist)=
+;;   - Set value of =VARIABLE= depend on =SEPARATOR= below.
+;;   - Each element of =ALIST= is =(SEPARATOR . VALUE)=,
+;;     and =VARIABLE= is set to =VALUE=
+;;     if =SEPARATOR= is valid.
+;;   - If there are some cons cells whose car (= =SEPARATOR=) is valid,
+;;     upstream element is used, and rest of them is not evaluated.
+;;   - in the cons cell whose =SEPARATOR= is =default=,
+;;     its =VALUE= is used only when any other =SEPARATOR= isn't valid.
+;;   - =(separate-set 'a ((b . c) ...))= is absolutely same as
+;;     =(separate-setq a ((b . c) ...))=.
+;; ** =separate-setq (variable alist)=
+;;   - Same as =separate-set=, but =VARIABLE= doesn't have to be quoted.
+;;   - See [[#HowToUse][How to Use Section]] as example.
+;; ** =separate-set-no-eval (variable alist)=
+;;   - Same as =separate-set-no-eval=, but =VALUE= are NOT evalueted.
+;; ** =separate-setq-no-eval (variable alist)=
+;;   - Same as =separate-setq-no-eval=, but =VALUE= are NOT evalueted.
+;; ** =separate-cond (&body clauses)=
+;;   - Similar to =cond=, but use =SEPARATOR= instead of =CANDICATE=.
+;;     If =SEPARATOR= is valid, evaluate =BODY=.
+;;   - Priority of each clause is same as =separate-set=.
 
 ;;; Code:
 
