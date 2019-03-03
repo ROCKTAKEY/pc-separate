@@ -9,7 +9,7 @@
 
 ;; Package-Requires: ((cl-lib "0.6.1") (emacs "24.3"))
 
-;; Version: 0.0.2
+;; Version: 0.0.3
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
