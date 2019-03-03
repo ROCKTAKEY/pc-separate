@@ -7,7 +7,7 @@
 
 ;; URL: https://github.com/ROCKTAKEY/pc-separate
 
-;; Package-Requires: ((cl-lib "1.0") (emacs "26.4"))
+;; Package-Requires: ((cl-lib "0.6.1") (emacs "24.3"))
 
 ;; Version: 0.0.2
 
