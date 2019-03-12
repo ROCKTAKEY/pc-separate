@@ -1,4 +1,4 @@
-;;; separate-test.el --- Test of separate
+;;; system-separate-test.el --- Test of separate
 
 ;; Copyright (C) 2018  ROCKTAKEY
 
@@ -25,181 +25,171 @@
 ;;; Code:
 
 (require 'ert)
-(require 'separate)
+(require 'system-separate)
 (eval-when-compile
   (require 'cl))
 
-(ert-deftest separate--system-name ()
+(ert-deftest ss--system-name ()
   (flet ((system-name () "windows-pc2"))
-    (should (separate--system-name '("mac1" "windows-pc2" "linux3")))
+    (should (ss--system-name '("mac1" "windows-pc2" "linux3")))
     (should-not
-     (separate--system-name '("mac1" "windows-pc21" "linux3")))
+     (ss--system-name '("mac1" "windows-pc21" "linux3")))
     ))
 
-(ert-deftest separate--emacs-version ()
+(ert-deftest ss--emacs-version ()
   (let ((emacs-major-version 10)
         (emacs-minor-version 5))
-    (should     (separate--emacs-version>= '(9)))
-    (should     (separate--emacs-version>= '(10 5)))
-    (should-not (separate--emacs-version>= '(10 6)))
-    (should     (separate--emacs-version>= '(9 5)))
-    (should     (separate--emacs-version>= '(9 6)))
+    (should     (ss--emacs-version>= '(9)))
+    (should     (ss--emacs-version>= '(10 5)))
+    (should-not (ss--emacs-version>= '(10 6)))
+    (should     (ss--emacs-version>= '(9 5)))
+    (should     (ss--emacs-version>= '(9 6)))
     ))
 
-(ert-deftest separate--separators ()
-  (let ((separate-separator-alist '((WIN1 . "windows-pc1")
-                                    (MAC1 . "mac-pc1")
-                                    (win2 . "windows-pc2")
-                                    (linux . "linux3")
-                                    )))
+(ert-deftest ss--separators ()
+  (let ((ss-separator-alist '((WIN1 . "windows-pc1")
+                              (MAC1 . "mac-pc1")
+                              (win2 . "windows-pc2")
+                              (linux . "linux3")
+                              )))
     (flet ((system-name () "windows-pc2"))
-      (should     (separate--separators '(WIN1 linux "some" win2)))
-      (should-not (separate--separators '(WIN1 linux "some")))
+      (should     (ss--separators '(Wssx "some" win2)))
+      (should-not (ss--separators '(WIN1 linux "some")))
       ))
   )
 
-(ert-deftest separate--os ()
+(ert-deftest ss--os ()
   (let ((system-type 'cygwin))
-    (should     (separate--os '(ms-dos cygwin)))
-    (should-not (separate--os '(ms-dos gnu/linux windows-nt))))
+    (should     (ss--os '(ms-dos cygwin)))
+    (should-not (ss--os '(ms-dos gnu/linux windows-nt))))
   )
 
-(ert-deftest separate--eval ()
+(ert-deftest ss--eval ()
   ""
-  (should (separate--eval '(nil t)))
+  (should (ss--eval '(nil t)))
   )
 
-(ert-deftest separate--package-available ()
-  (should     (separate--package-available '(cl-lib separate)))
-  (should-not (separate--package-available '(cl-lib not-defined-feature))))
+(ert-deftest ss--package-available ()
+  (should     (ss--package-available '(cl-lib system-separate)))
+  (should-not (ss--package-available '(cl-lib not-defined-feature))))
 
 
 
 
-(ert-deftest separate--function-assq ()
-  (should (equal 2 (separate--function-assq t '((ignore . 1) (identity . 2)))))
-  (should-not  (separate--function-assq t '((ignore . 1) (ignore . 2))))
+(ert-deftest ss--function-assq ()
+  (should (equal 2 (ss--function-assq t '((ignore . 1) (identity . 2)))))
+  (should-not  (ss--function-assq t '((ignore . 1) (ignore . 2))))
   )
 
-(ert-deftest separate--mapc-or ()
-  (should     (separate--mapc-or 'identity '(nil nil t)))
-  (should-not (separate--mapc-or 'ignore   '(nil nil t)))
-  )
-
-(ert-deftest separate--mapc-and ()
-  (should-not (separate--mapc-and 'identity '(nil nil t)))
-  (should-not (separate--mapc-and 'ignore   '(nil nil t)))
-  (should     (separate--mapc-and 'identity '(t t 1)))
-  )
-
-(ert-deftest separate--assq ()
-  (should (equal 3 (separate--assq 'c '((a . 1) (b . 2) (c . 3)))))
-  (should (equal 2 (separate--assq 'c '((a . 1) ((b c) . 2) (d . 3)))))
-  (should (equal 1 (separate--assq 'c '(((q z) . 2) ((b c) . 1) ((a c) . 3)))))
-  (should-not (separate--assq 'c '(((q z) . 1) ((b w) . 2) (a . 3))))
+(ert-deftest ss--assq ()
+  (should (equal 3 (ss--assq 'c '((a . 1) (b . 2) (c . 3)))))
+  (should (equal 2 (ss--assq 'c '((a . 1) ((b c) . 2) (d . 3)))))
+  (should (equal 1 (ss--assq 'c '(((q z) . 2) ((b c) . 1) ((a c) . 3)))))
+  (should-not (ss--assq 'c '(((q z) . 1) ((b w) . 2) (a . 3))))
   )
 
 
 
-(ert-deftest separate--separators-p ()
-  (should-not  (separate--separators-p '(:alias separator1 separator2)))
-  (should      (separate--separators-p '(alias separator1 separator2)))
+(ert-deftest ss--separators-p ()
+  (should-not  (ss--separators-p '(:alias separator1 separator2)))
+  (should      (ss--separators-p '(alias separator1 separator2)))
   )
 
-(ert-deftest separate--symbol-separator-instance ()
-  (let ((separate-separator-alist '((WIN1 . "windows-pc1")
-                                    (MAC1 . "mac-pc1")
-                                    (win2 . "windows-pc2")
-                                    (wow  . (:alies WIN1)))))
+(ert-deftest ss--symbol-separator-instance ()
+  (let ((ss-separator-alist '((WIN1 . "windows-pc1")
+                              (MAC1 . "mac-pc1")
+                              (win2 . "windows-pc2")
+                              (wow  . (:alies WIN1)))))
 
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
-      (should (equal "windows-pc1" (separate--symbol-separator-instance 'WIN1)))
-      (should-not  (separate--symbol-separator-instance nil))
-      (should (equal '(:alies WIN1) (separate--symbol-separator-instance 'wow)))
+      (should (equal "windows-pc1" (ss--symbol-separator-instance 'WIN1)))
+      (should-not  (ss--symbol-separator-instance nil))
+      (should (equal '(:alies WIN1) (ss--symbol-separator-instance 'wow)))
       )))
 
-(ert-deftest separate--separator-normalize ()
+(ert-deftest ss--separator-normalize ()
   (should (equal '(:system-name "a")
-                 (separate--separator-normalize "a")))
+                 (ss--separator-normalize "a")))
   (should (equal '(:emacs-version>= 3)
-                 (separate--separator-normalize 3)))
+                 (ss--separator-normalize 3)))
   (should-not (equal '(:alias a)
-                     (separate--separator-normalize 'a)))
+                     (ss--separator-normalize 'a)))
   )
 
-(ert-deftest separate--symbol-separator-current-p ()
-  (let ((separate-separator-alist '((WIN1 . "windows-pc1")
-                                    (MAC1 . "mac-pc1")
-                                    (win2 . "windows-pc2")
-                                    (wow  . (:alias win2)))))
+(ert-deftest ss--symbol-separator-current-p ()
+  (let ((ss-separator-alist '((WIN1 . "windows-pc1")
+                              (MAC1 . "mac-pc1")
+                              (win2 . "windows-pc2")
+                              (wow  . (:alias win2)))))
 
     (flet ((system-name () "windows-pc2"))
-      (should-not (separate--symbol-separator-current-p 'WIN1))
-      (should     (separate--symbol-separator-current-p 'win2))
-      (should     (separate--symbol-separator-current-p 'wow))
+      (should-not (ss--symbol-separator-current-p 'WIN1))
+      (should     (ss--symbol-separator-current-p 'win2))
+      (should     (ss--symbol-separator-current-p 'wow))
       ))
   )
 
-(ert-deftest separate--current-separator-p ()
-  (let ((separate-separator-alist '((WIN1 . "windows-pc1")
-                                    (MAC1 . "mac-pc1")
-                                    (win2 . "windows-pc2"))))
+(ert-deftest ss--current-separator-p ()
+  (let ((ss-separator-alist '((WIN1 . "windows-pc1")
+                              (MAC1 . "mac-pc1")
+                              (win2 . "windows-pc2"))))
     (flet ((system-name () "windows-pc2"))
-      (should (separate--current-separator-p 'win2))
-      (should (not (separate--current-separator-p 'WIN1)))
+      (should (ss--current-separator-p 'win2))
+      (should (not (ss--current-separator-p 'WIN1)))
       )))
 
-(ert-deftest separate-:eval ()
-  (should (separate--current-separator-p '(:eval nil t))))
+(ert-deftest ss-:eval ()
+  (should (ss--current-separator-p '(:eval nil t))))
 
 
 
-(ert-deftest separate-set-no-eval ()
+(ert-deftest ss-set-no-eval ()
   (let ((var nil)
-        (separate-separator-alist '((WIN1 . "windows-pc1")
-                                    (MAC1 . "mac-pc1")
-                                    (win2 . "windows-pc2")
-                                    (all  . (:eval t))
-                                    (win (:separators WIN1 win2))
-                                    (seps (:alias MAC1 WIN1))
-                                    (ev1 . 5)
-                                    (ev2 . (:emacs-version>= 5 3))
-                                    (os . (:os windows-nt))
-                                    (os1 . windows-nt)
-                                    (pkg . (:package-available cl-lib separate))
-                                    (sn . (:system-name "windows-pc2"))
-                                    (and . (:and
-                                            win os ev1 pkg sn))
-                                    ))
+        (ss-separator-alist
+         '((WIN1 . "windows-pc1")
+           (MAC1 . "mac-pc1")
+           (win2 . "windows-pc2")
+           (all  . (:eval t))
+           (win  . (:separators WIN1 win2))
+           (seps . (:alias MAC1 WIN1))
+           (ev1  . 5)
+           (ev2  . (:emacs-version>= 5 3))
+           (os   . (:os windows-nt))
+           (os1  . windows-nt)
+           (pkg  . (:package-available cl-lib system-separate))
+           (sn   . (:system-name "windows-pc2"))
+           (and  . (:and
+                   win os ev1 pkg sn))
+           ))
         (emacs-major-version 6)
         (emacs-minor-version 2)
         (system-type 'windows-nt))
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
-      (separate-set-no-eval 'var
-                            (("windows-pc2" . (+ 1 1))
-                             (win2 . (+ 3 1))))
+      (ss-set-no-eval 'var
+                      (("windows-pc2" . (+ 1 1))
+                       (win2 . (+ 3 1))))
       (should (equal var '(+ 1 1)))
 
-      (separate-set-no-eval 'var
-                            (("windows-pc1" . (+ 1 1))
-                             (WIN1 . (+ 2 1))
-                             ("windows-pc2" . (+ 3 1))
-                             ))
+      (ss-set-no-eval 'var
+                      (("windows-pc1" . (+ 1 1))
+                       (WIN1 . (+ 2 1))
+                       ("windows-pc2" . (+ 3 1))
+                       ))
       (should (equal var '(+ 3 1)))
 
-      (separate-set-no-eval 'var
-                            (("windows-pc1" . (+ 1 1))
-                             (WIN1 . (+ 2 1))
-                             ("windows-pc2" . (+ 3 1))
-                             (win2 . (+ 4 1))))
+      (ss-set-no-eval 'var
+                      (("windows-pc1" . (+ 1 1))
+                       (WIN1 . (+ 2 1))
+                       ("windows-pc2" . (+ 3 1))
+                       (win2 . (+ 4 1))))
       (should (equal var '(+ 3 1)))
 
       ;; all
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (all  . (+ 3 1))
@@ -207,7 +197,7 @@
       (should (equal var '(+ 3 1)))
 
       ;; win
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (win  . (+ 5 1))
@@ -215,7 +205,7 @@
       (should (equal var '(+ 5 1)))
 
       ;; seps
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (seps . (+ 3 1))
@@ -223,7 +213,7 @@
       (should (equal var '(+ 4 1)))
 
       ;; ev1
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (ev1  . (+ 5 1))
@@ -231,7 +221,7 @@
       (should (equal var '(+ 5 1)))
 
       ;; ev2
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (ev2  . (+ 6 1))
@@ -239,7 +229,7 @@
       (should (equal var '(+ 6 1)))
 
       ;; os
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (os   . (+ 7 1))
@@ -247,7 +237,7 @@
       (should (equal var '(+ 7 1)))
 
       ;; os1
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (os1  . (+ 8 1))
@@ -255,7 +245,7 @@
       (should (equal var '(+ 8 1)))
 
       ;; pkg
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (pkg  . (+ 9 1))
@@ -263,7 +253,7 @@
       (should (equal var '(+ 9 1)))
 
       ;; sn
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (sn   . (+ 10 1))
@@ -271,7 +261,7 @@
       (should (equal var '(+ 10 1)))
 
       ;; and
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (and  . (+ 11 1))
@@ -279,7 +269,7 @@
       (should (equal var '(+ 11 1)))
 
       ;; default
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1 . (+ 2 1))
                              (MAC1 . (+ 3 1))
@@ -287,7 +277,7 @@
       (should (equal var '(+ 12 1)))
 
       ;; default
-      (separate-set-no-eval 'var
+      (ss-set-no-eval 'var
                             (("windows-pc1" . (+ 1 1))
                              (WIN1    . (+ 2 1))
                              (default . (+ 12 1))
@@ -296,42 +286,43 @@
       (should (equal var '(+ 3 1)))
       )))
 
-(ert-deftest separate-setq-no-eval ()
+(ert-deftest ss-setq-no-eval ()
   (let ((var nil)
-        (separate-separator-alist '((WIN1 . "windows-pc1")
-                                    (MAC1 . "mac-pc1")
-                                    (win2 . "windows-pc2")
-                                    (all  . (:eval t))
-                                    (win (:separators WIN1 win2))
-                                    (seps (:alias MAC1 WIN1))
-                                    (ev1 . 5)
-                                    (ev2 . (:emacs-version>= 5 3))
-                                    (os . (:os windows-nt))
-                                    (os1 . windows-nt)
-                                    (pkg . (:package-available cl-lib separate))
-                                    (sn . (:system-name "windows-pc2"))
-                                    (and . (:and
-                                            win os ev1 pkg sn))
-                                    ))
+        (ss-separator-alist
+         '((WIN1 . "windows-pc1")
+           (MAC1 . "mac-pc1")
+           (win2 . "windows-pc2")
+           (all  . (:eval t))
+           (win (:separators WIN1 win2))
+           (seps (:alias MAC1 WIN1))
+           (ev1 . 5)
+           (ev2 . (:emacs-version>= 5 3))
+           (os . (:os windows-nt))
+           (os1 . windows-nt)
+           (pkg . (:package-available cl-lib system-separate))
+           (sn . (:system-name "windows-pc2"))
+           (and . (:and
+                   win os ev1 pkg sn))
+           ))
         (emacs-major-version 6)
         (emacs-minor-version 2)
         (system-type 'windows-nt))
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc2" . (+ 1 1))
                               (win2 . (+ 3 1))))
       (should (equal var '(+ 1 1)))
 
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               ("windows-pc2" . (+ 3 1))
                               ))
       (should (equal var '(+ 3 1)))
 
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               ("windows-pc2" . (+ 3 1))
@@ -339,7 +330,7 @@
       (should (equal var '(+ 3 1)))
 
       ;; all
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (all  . (+ 3 1))
@@ -347,7 +338,7 @@
       (should (equal var '(+ 3 1)))
 
       ;; win
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (win  . (+ 5 1))
@@ -355,7 +346,7 @@
       (should (equal var '(+ 5 1)))
 
       ;; seps
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (seps . (+ 3 1))
@@ -363,7 +354,7 @@
       (should (equal var '(+ 4 1)))
 
       ;; ev1
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (ev1  . (+ 5 1))
@@ -371,7 +362,7 @@
       (should (equal var '(+ 5 1)))
 
       ;; ev2
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (ev2  . (+ 6 1))
@@ -379,7 +370,7 @@
       (should (equal var '(+ 6 1)))
 
       ;; os
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (os   . (+ 7 1))
@@ -387,7 +378,7 @@
       (should (equal var '(+ 7 1)))
 
       ;; os1
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (os1  . (+ 8 1))
@@ -395,7 +386,7 @@
       (should (equal var '(+ 8 1)))
 
       ;; pkg
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (pkg  . (+ 9 1))
@@ -403,7 +394,7 @@
       (should (equal var '(+ 9 1)))
 
       ;; sn
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (sn   . (+ 10 1))
@@ -411,7 +402,7 @@
       (should (equal var '(+ 10 1)))
 
       ;; and
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (and  . (+ 11 1))
@@ -419,7 +410,7 @@
       (should (equal var '(+ 11 1)))
 
       ;; default
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1 . (+ 2 1))
                               (MAC1 . (+ 3 1))
@@ -427,7 +418,7 @@
       (should (equal var '(+ 12 1)))
 
       ;; default
-      (separate-setq-no-eval var
+      (ss-setq-no-eval var
                              (("windows-pc1" . (+ 1 1))
                               (WIN1    . (+ 2 1))
                               (default . (+ 12 1))
@@ -438,42 +429,43 @@
 
 
 
-(ert-deftest separate-set ()
+(ert-deftest ss-set ()
   (let ((var nil)
-        (separate-separator-alist '((WIN1 . "windows-pc1")
-                                    (MAC1 . "mac-pc1")
-                                    (win2 . "windows-pc2")
-                                    (all  . (:eval t))
-                                    (win (:separators WIN1 win2))
-                                    (seps (:alias MAC1 WIN1))
-                                    (ev1 . 5)
-                                    (ev2 . (:emacs-version>= 5 3))
-                                    (os . (:os windows-nt))
-                                    (os1 . windows-nt)
-                                    (pkg . (:package-available cl-lib separate))
-                                    (sn . (:system-name "windows-pc2"))
-                                    (and . (:and
-                                            win os ev1 pkg sn))
-                                    ))
+        (ss-separator-alist
+         '((WIN1 . "windows-pc1")
+           (MAC1 . "mac-pc1")
+           (win2 . "windows-pc2")
+           (all  . (:eval t))
+           (win (:separators WIN1 win2))
+           (seps (:alias MAC1 WIN1))
+           (ev1 . 5)
+           (ev2 . (:emacs-version>= 5 3))
+           (os . (:os windows-nt))
+           (os1 . windows-nt)
+           (pkg . (:package-available cl-lib system-separate))
+           (sn . (:system-name "windows-pc2"))
+           (and . (:and
+                   win os ev1 pkg sn))
+           ))
         (emacs-major-version 6)
         (emacs-minor-version 2)
         (system-type 'windows-nt))
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc2" . 1)
                      (win2 . 3)))
       (should (equal var 1))
 
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      ("windows-pc2" . 3)
                      ))
       (should (equal var 3))
 
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      ("windows-pc2" . 3)
@@ -481,7 +473,7 @@
       (should (equal var 3))
 
       ;; all
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (all  . 3)
@@ -489,7 +481,7 @@
       (should (equal var 3))
 
       ;; win
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (win  . 5)
@@ -497,7 +489,7 @@
       (should (equal var 5))
 
       ;; seps
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (seps  . 3)
@@ -505,7 +497,7 @@
       (should (equal var 4))
 
       ;; ev1
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (ev1  . 5)
@@ -513,7 +505,7 @@
       (should (equal var 5))
 
       ;; ev2
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (ev2  . 6)
@@ -521,7 +513,7 @@
       (should (equal var 6))
 
       ;; os
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (os  . 7)
@@ -529,7 +521,7 @@
       (should (equal var 7))
 
       ;; os1
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (os1  . 8)
@@ -537,7 +529,7 @@
       (should (equal var 8))
 
       ;; pkg
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (pkg  . 9)
@@ -545,7 +537,7 @@
       (should (equal var 9))
 
       ;; sn
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (sn   . 10)
@@ -553,7 +545,7 @@
       (should (equal var 10))
 
       ;; and
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (and  . 11)
@@ -561,7 +553,7 @@
       (should (equal var 11))
 
       ;; default
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (MAC1 . 3)
@@ -569,7 +561,7 @@
       (should (equal var 12))
 
       ;; default
-      (separate-set 'var
+      (ss-set 'var
                     (("windows-pc1" . 1)
                      (WIN1 . 2)
                      (default . 12)
@@ -578,19 +570,19 @@
       (should (equal var 3))
       )))
 
-(ert-deftest separate-setq ()
+(ert-deftest ss-setq ()
   (let ((var nil)
-        (separate-separator-alist '((WIN1 . "windows-pc1")
+        (ss-separator-alist '((WIN1 . "windows-pc1")
                                     (MAC1 . "mac-pc1")
                                     (win2 . "windows-pc2"))))
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
-      (separate-setq var
+      (ss-setq var
                      (("windows-pc2" . 1)
                       (win2 . 3)))
 
       (should (equal var 1))
-      (separate-setq var
+      (ss-setq var
                      (("windows-pc1" . 1)
                       (WIN1 . 2)
                       (win2 . 4)))
@@ -598,9 +590,9 @@
       ))
   )
 
-(ert-deftest separate-cond ()
+(ert-deftest ss-cond ()
   (let ((var nil)
-        (separate-separator-alist '(("windows-pc1" . WIN1)
+        (ss-separator-alist '(("windows-pc1" . WIN1)
                                     ("mac-pc1" . MAC1)
                                     ("windows-pc2" . 1)
                                     ("windows-pc2" . 5)
@@ -611,14 +603,14 @@
 
       (should
        (equal
-        (separate-cond
+        (ss-cond
          ("windows-pc2" 1)
          (5 3 2)
          (win2 6 3)
          (default 100))
         1))
 
-      (separate-cond
+      (ss-cond
        ("windows-pc2"
         (abc 1))
        (5
@@ -637,5 +629,5 @@
 ;;          ("windows-pc2" . 3)
 ;;          (win2 . 4)))
 
-(provide 'separate-test)
-;;; separate-test.el ends here
+(provide 'system-separate-test)
+;;; system-separate-test.el ends here
