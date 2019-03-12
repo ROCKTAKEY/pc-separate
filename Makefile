@@ -3,11 +3,11 @@ TESTINGFILE := system-separate-test.el
 TESTEDFILES := system-separate.el
 CASK ?= cask
 
+easy-test:
+	${EMACS} -batch -Q -L . -l ${TESTINGFILE} -f  ert-run-tests-batch-and-exit
+
 test:
 	${CASK} exec ert-runner
-
-test2:
-	${EMACS} -batch -Q -L . -l ${TESTINGFILE} -f  ert-run-tests-batch-and-exit
 
 travis:
 	${MAKE} clean
@@ -22,4 +22,4 @@ compile:
 clean:
 	rm -f system-separate.elc
 
-.PHONY: test2 test travis compile clean
+.PHONY: easy-test test travis compile clean
