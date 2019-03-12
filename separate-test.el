@@ -81,17 +81,6 @@
   (should-not  (separate--function-assq t '((ignore . 1) (ignore . 2))))
   )
 
-(ert-deftest separate--mapc-or ()
-  (should     (separate--mapc-or 'identity '(nil nil t)))
-  (should-not (separate--mapc-or 'ignore   '(nil nil t)))
-  )
-
-(ert-deftest separate--mapc-and ()
-  (should-not (separate--mapc-and 'identity '(nil nil t)))
-  (should-not (separate--mapc-and 'ignore   '(nil nil t)))
-  (should     (separate--mapc-and 'identity '(t t 1)))
-  )
-
 (ert-deftest separate--assq ()
   (should (equal 3 (separate--assq 'c '((a . 1) (b . 2) (c . 3)))))
   (should (equal 2 (separate--assq 'c '((a . 1) ((b c) . 2) (d . 3)))))
