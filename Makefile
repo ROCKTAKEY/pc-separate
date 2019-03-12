@@ -1,8 +1,12 @@
 EMACS ?= emacs
 TESTINGFILE := system-separate-test.el
 TESTEDFILES := system-separate.el
+CASK ?= cask
 
 test:
+	${CASK} exec ert-runner
+
+test2:
 	${EMACS} -batch -Q -L . -l ${TESTINGFILE} -f  ert-run-tests-batch-and-exit
 
 travis:
@@ -18,4 +22,4 @@ compile:
 clean:
 	rm -f system-separate.elc
 
-.PHONY: test travis compile clean
+.PHONY: test2 test travis compile clean
