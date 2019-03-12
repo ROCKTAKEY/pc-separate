@@ -308,4 +308,4 @@ if (ss-current-separator-p SEPARATOR) return non-nil.
        (eval (cons 'progn ,c)))))
 
 (provide 'system-separate)
-;;; separate.el ends here
+;;; system-separate.el ends here
