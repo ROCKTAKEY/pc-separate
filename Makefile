@@ -14,7 +14,7 @@ travis:
 	${MAKE} clean
 
 compile:
-	${EMACS} -batch -Q -L . -eval "(batch-byte-compile)" system-separate.el
+	${CASK} exec ${EMACS} -batch -Q -L . -eval "(batch-byte-compile)" system-separate.el
 
 clean:
 	rm -f system-separate.elc
