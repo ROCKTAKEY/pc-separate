@@ -7,7 +7,7 @@
 
 ;; URL: https://github.com/ROCKTAKEY/pc-separate
 
-;; Package-Requires: ((cl-lib "0.6.1") (emacs "24.3"))
+;; Package-Requires: ((cl-lib "0.6.1") (emacs "24.3") (dash "2.15.0"))
 
 ;; Version: 0.0.3
 
@@ -58,6 +58,8 @@
 (eval-when-compile
   (require 'cl-lib))
 
+(require 'dash)
+
 (defgroup separate nil
   "separate group."
   :group 'tools)
@@ -83,7 +85,7 @@ And you can use the number instead of system-name on separate."
 
 (defun separate--system-name (args)
   "Return non-nil if ARGS contain value returned by function `system-name'."
-  (separate--mapc-or
+  (-any?
    (lambda (a) nil nil
      (string= a (system-name)))
    args))
@@ -102,15 +104,15 @@ If MAJOR.MINOR is same and or higher than variable `emacs-version', return non-n
 
 (defun separate--separators (args)
   "Return non-nil if one of ARGS elements is a valid separator."
-  (separate--mapc-or 'separate--current-separator-p args))
+  (-any? 'separate--current-separator-p args))
 
 (defun separate--and (args)
   "Return non-nil if all of ARGS elements are valid separator."
-  (separate--mapc-and 'separate--current-separator-p args))
+  (-all? 'separate--current-separator-p args))
 
 (defun separate--os (args)
   "Return non-nil if one of ARGS elements is same as `system-type'."
-  (separate--mapc-or
+  (-any?
    (lambda (a) nil nil
      (eq a system-type))
    args)
@@ -123,7 +125,7 @@ If MAJOR.MINOR is same and or higher than variable `emacs-version', return non-n
 
 (defun separate--package-available (args)
   "Return non-nil if all of ARGS elements are return non-nil when passed to `featurep'."
-  (separate--mapc-and 'featurep args)
+  (-all? 'featurep args)
   )
 
 
@@ -138,28 +140,6 @@ Each element of ALIST is (FUNC . VALUE)."
    end
    finally
    return nil))
-
-(defun separate--mapc-or (func list)
-  "If (funcall FUNC ELEMENT) return t on one or more ELEMENT of LIST, return t."
-  (cl-loop
-   for x in list
-   if (funcall func x)
-   return t
-   end
-   finally
-   return nil)
-  )
-
-(defun separate--mapc-and (func list)
-  "If (funcall FUNC ELEMENT) return t on all ELEMENT of LIST, return t."
-  (cl-loop
-   for x in list
-   unless (funcall func x)
-   return nil
-   end
-   finally
-   return t)
-  )
 
 (defun separate--assq (key alist)
   "Same as assq, but if car of element of ALIST is list, compare KEY to element of that, too."
