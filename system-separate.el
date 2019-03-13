@@ -213,6 +213,7 @@ if (ss-current-separator-p SEPARATOR) return non-nil.
 VALUE is NOT evaluated.
 
 \(fn VARIABLE ((SEPARATOR . VALUE)...))"
+  (declare (debug (form (&rest (ss-separator-p . [&rest sexp])))))
   (let ((valid-cons (gensym "valid-cons"))
         (separator (gensym "separator"))
         (value (gensym "value"))
@@ -245,6 +246,7 @@ variable have to be non-quoted.
 VALUE is NOT evaluated.
 
 \(fn VARIABLE ((SEPARATOR . VALUE)...))"
+  (declare (debug (symbolp (&rest (ss-separator-p . [&rest sexp])))))
   `(ss-set-no-eval (quote ,variable) ,alist))
 
 
@@ -257,6 +259,7 @@ if (ss-current-separator-p SEPARATOR) return non-nil.
 VALUE is evaluated.
 
 \(fn VARIABLE ((SEPARATOR . VALUE)...))"
+  (declare (debug (form (&rest (ss-separator-p . [&rest form])))))
   (let ((valid-cons (gensym "valid-cons"))
         (separator (gensym "separator"))
         (value (gensym "value"))
@@ -287,6 +290,7 @@ variable have to be non-quoted.
 VALUE is evaluated.
 
 \(fn VARIABLE ((SEPARATOR . VALUE)...))"
+  (declare (debug (symbolp (&rest (ss-separator-p . [&rest form])))))
   `(ss-set (quote ,variable) ,alist))
 
 ;;;###autoload
@@ -296,6 +300,7 @@ Each element of CLAUSES looks like (SEPARATOR BODY...).  BODY is evaluate
 if (ss-current-separator-p SEPARATOR) return non-nil.
 
 \(fn (SEPARATOR BODY...)...)"
+  (declare (debug (&rest (ss-separator-p [&rest form]))))
   (let ((c (gensym)))
     `(let (,c)
        (ss-setq-no-eval ,c ,clauses)
