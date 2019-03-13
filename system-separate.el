@@ -163,6 +163,13 @@ trapped before applied this variable to.")
        (when (symbolp c)
          (string= ":" (substring (symbol-name c) 0 1)))))))
 
+(defun ss--separator-p (object)
+  "Return non-nil if object is separator."
+  (or
+   (listp object)
+   (symbolp object)
+   (ss--function-assq object 'ss--default-alist)))
+
 (defun ss--symbol-separator-instance (symbol-separator)
   "Return instance of SYMBOL-SEPARATOR in `ss-separator-alist'."
   (cdr (assq symbol-separator ss-separator-alist)))
