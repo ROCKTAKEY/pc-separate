@@ -70,8 +70,7 @@
 You can add (system-name . number-or-symbol).
 And you can use the number instead of system-name on separate."
   :group 'system-separate
-  :type '(set (cons (choice integer symbol) string))
-  )
+  :type '(set (cons (choice integer symbol) string)))
 
 
 
@@ -100,8 +99,7 @@ If MAJOR.MINOR is same and or higher than variable `emacs-version', return non-n
     (or (> emacs-major-version major)
         (and
          (= emacs-major-version major)
-         (or (not minor) (>= emacs-minor-version minor)))))
-  )
+         (or (not minor) (>= emacs-minor-version minor))))))
 
 (defun ss--separators (args)
   "Return non-nil if one of ARGS elements is a valid separator."
@@ -116,18 +114,15 @@ If MAJOR.MINOR is same and or higher than variable `emacs-version', return non-n
   (-any?
    (lambda (a) nil nil
      (eq a system-type))
-   args)
-  )
+   args))
 
 (defun ss--eval (args)
   "Return result of evaluating ARGS."
-  (eval (cons 'progn args))
-  )
+  (eval (cons 'progn args)))
 
 (defun ss--package-available (args)
   "Return non-nil if all of ARGS elements are return non-nil when passed to `featurep'."
-  (-all? 'featurep args)
-  )
+  (-all? 'featurep args))
 
 
 
@@ -149,9 +144,7 @@ Each element of ALIST is (FUNC . VALUE)."
    if (or (eq key x) (and (listp x) (memq key x)))
    return y
    end
-   finally return nil
-   )
-  )
+   finally return nil))
 
 
 
@@ -172,8 +165,7 @@ trapped before applied this variable to.")
 
 (defun ss--symbol-separator-instance (symbol-separator)
   "Return instance of SYMBOL-SEPARATOR in `ss-separator-alist'."
-  (cdr (assq symbol-separator ss-separator-alist))
-  )
+  (cdr (assq symbol-separator ss-separator-alist)))
 
 (defun ss--separator-normalize (separator)
   "Normarize SEPARATOR.
@@ -186,15 +178,13 @@ Change SEPARATOR to be listed one whose car is :foobar."
      ;; make listed-separaor
      (hidden-kind (list hidden-kind separator))
      ;; fall out symbol-separator
-     (t separator))
-    ))
+     (t separator))))
 
 (defun ss--symbol-separator-current-p (symbol-separator)
   "Return non-nil if SYMBOL-SEPARATOR is valid separator."
   (or (ss--os (list symbol-separator))
       (ss--current-separator-p
-       (ss--symbol-separator-instance symbol-separator)))
-  )
+       (ss--symbol-separator-instance symbol-separator))))
 
 (defun ss--current-separator-p (separator)
   "Return non-nil if SEPARATOR is valid separator."
@@ -219,8 +209,7 @@ VALUE is NOT evaluated.
   (let ((valid-cons (gensym "valid-cons"))
         (separator (gensym "separator"))
         (value (gensym "value"))
-        (default (gensym "default"))
-        )
+        (default (gensym "default")))
     ;; throw error if ALIST is NOT both alist and symbol.
     `(let (,valid-cons (,default nil))
        (setq ,valid-cons
@@ -264,8 +253,7 @@ VALUE is evaluated.
   (let ((valid-cons (gensym "valid-cons"))
         (separator (gensym "separator"))
         (value (gensym "value"))
-        (default (gensym "default"))
-        )
+        (default (gensym "default")))
     `(let (,valid-cons (,default nil))
        (setq ,valid-cons
              (cl-loop
@@ -277,8 +265,7 @@ VALUE is evaluated.
               end
               ;; If never eval "return form", return default
               ;; which is nil if no "default" separator.
-              finally return ,default
-              ))
+              finally return ,default))
        ;; If no valid-cons, return nil because of `when' macro.
        (when ,valid-cons
          (set ,variable (eval (cdr ,valid-cons))))
