@@ -168,7 +168,7 @@ trapped before applied this variable to.")
   (or
    (listp object)
    (symbolp object)
-   (ss--function-assq object 'ss--default-alist)))
+   (ss--function-assq object ss--default-alist)))
 
 (defun ss--symbol-separator-instance (symbol-separator)
   "Return instance of SYMBOL-SEPARATOR in `ss-separator-alist'."
