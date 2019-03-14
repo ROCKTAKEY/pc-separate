@@ -9,7 +9,7 @@
 
 ;; Package-Requires: ((cl-lib "0.6.1") (emacs "24.3") (dash "2.15.0"))
 
-;; Version: 0.0.4
+;; Version: 0.0.5
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
