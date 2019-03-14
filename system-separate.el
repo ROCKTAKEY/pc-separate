@@ -230,8 +230,7 @@ VALUE is NOT evaluated.
               end
               ;; If never eval "return form", return default
               ;; which is nil if no "default" separator.
-              finally return ,default
-              ))
+              finally return ,default))
        ;; If no valid-cons, return nil because of `when' macro.
        (when ,valid-cons
          (set ,variable (cdr ,valid-cons)))
