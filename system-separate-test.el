@@ -95,6 +95,13 @@
   (should      (ss--separators-p '(alias separator1 separator2)))
   )
 
+(ert-deftest ss--separator-p ()
+  (should (ss--separator-p '(:alias separator1 separator2)))
+  (should (ss--separator-p 'separator))
+  (should (ss--separator-p 3))
+  (should (ss--separator-p "PC-NAME")))
+
+
 (ert-deftest ss--symbol-separator-instance ()
   (let ((ss-separator-alist '((WIN1 . "windows-pc1")
                               (MAC1 . "mac-pc1")
