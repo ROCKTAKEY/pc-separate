@@ -164,7 +164,7 @@ trapped before applied this variable to.")
          (string= ":" (substring (symbol-name c) 0 1)))))))
 
 (defun ss--separator-p (object)
-  "Return non-nil if object is separator."
+  "Return non-nil if OBJECT is separator."
   (or
    (listp object)
    (symbolp object)
