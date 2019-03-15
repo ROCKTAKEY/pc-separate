@@ -44,14 +44,14 @@
     (should     (system-separate--emacs-version>= '(9 5)))
     (should     (system-separate--emacs-version>= '(9 6)))))
 
-(ert-deftest system-separate--separators ()
-  (let ((system-separate-separator-alist '((WIN1 . "windows-pc1")
-                              (MAC1 . "mac-pc1")
-                              (win2 . "windows-pc2")
-                              (linux . "linux3"))))
+(ert-deftest system-separate--system-separators ()
+  (let ((system-separate-system-separator-alist '((WIN1 . "windows-pc1")
+                                                  (MAC1 . "mac-pc1")
+                                                  (win2 . "windows-pc2")
+                                                  (linux . "linux3"))))
     (flet ((system-name () "windows-pc2"))
-      (should     (system-separate--separators '(Wssx "some" win2)))
-      (should-not (system-separate--separators '(WIN1 linux "some"))))))
+      (should     (system-separate--system-separators '(Wssx "some" win2)))
+      (should-not (system-separate--system-separators '(WIN1 linux "some"))))))
 
 (ert-deftest system-separate--os ()
   (let ((system-type 'cygwin))
@@ -81,19 +81,19 @@
 
 
 
-(ert-deftest system-separate--separators-p ()
-  (should-not  (system-separate--separators-p '(:alias separator1 separator2)))
-  (should      (system-separate--separators-p '(alias separator1 separator2))))
+(ert-deftest system-separate--system-separators-p ()
+  (should-not  (system-separate--system-separators-p '(:alias system-separator1 system-separator2)))
+  (should      (system-separate--system-separators-p '(alias system-separator1 system-separator2))))
 
-(ert-deftest system-separate--separator-p ()
-  (should (system-separate--separator-p '(:alias separator1 separator2)))
-  (should (system-separate--separator-p 'separator))
-  (should (system-separate--separator-p 3))
-  (should (system-separate--separator-p "PC-NAME")))
+(ert-deftest system-separate--system-separator-p ()
+  (should (system-separate--system-separator-p '(:alias system-separator1 system-separator2)))
+  (should (system-separate--system-separator-p 'system-separator))
+  (should (system-separate--system-separator-p 3))
+  (should (system-separate--system-separator-p "PC-NAME")))
 
 
-(ert-deftest system-separate--symbol-separator-instance ()
-  (let ((system-separate-separator-alist '((WIN1 . "windows-pc1")
+(ert-deftest system-separate--symbol-system-separator-instance ()
+  (let ((system-separate-system-separator-alist '((WIN1 . "windows-pc1")
                               (MAC1 . "mac-pc1")
                               (win2 . "windows-pc2")
                               (wow  . (:alies WIN1)))))
@@ -101,50 +101,50 @@
     (flet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
-      (should (equal "windows-pc1" (system-separate--symbol-separator-instance 'WIN1)))
-      (should-not  (system-separate--symbol-separator-instance nil))
-      (should (equal '(:alies WIN1) (system-separate--symbol-separator-instance 'wow))))))
+      (should (equal "windows-pc1" (system-separate--symbol-system-separator-instance 'WIN1)))
+      (should-not  (system-separate--symbol-system-separator-instance nil))
+      (should (equal '(:alies WIN1) (system-separate--symbol-system-separator-instance 'wow))))))
 
-(ert-deftest system-separate--separator-normalize ()
+(ert-deftest system-separate--system-separator-normalize ()
   (should (equal '(:system-name "a")
-                 (system-separate--separator-normalize "a")))
+                 (system-separate--system-separator-normalize "a")))
   (should (equal '(:emacs-version>= 3)
-                 (system-separate--separator-normalize 3)))
+                 (system-separate--system-separator-normalize 3)))
   (should-not (equal '(:alias a)
-                     (system-separate--separator-normalize 'a))))
+                     (system-separate--system-separator-normalize 'a))))
 
-(ert-deftest system-separate--symbol-separator-current-p ()
-  (let ((system-separate-separator-alist '((WIN1 . "windows-pc1")
+(ert-deftest system-separate--symbol-system-separator-current-p ()
+  (let ((system-separate-system-separator-alist '((WIN1 . "windows-pc1")
                               (MAC1 . "mac-pc1")
                               (win2 . "windows-pc2")
                               (wow  . (:alias win2)))))
 
     (flet ((system-name () "windows-pc2"))
-      (should-not (system-separate--symbol-separator-current-p 'WIN1))
-      (should     (system-separate--symbol-separator-current-p 'win2))
-      (should     (system-separate--symbol-separator-current-p 'wow)))))
+      (should-not (system-separate--symbol-system-separator-current-p 'WIN1))
+      (should     (system-separate--symbol-system-separator-current-p 'win2))
+      (should     (system-separate--symbol-system-separator-current-p 'wow)))))
 
-(ert-deftest system-separate--current-separator-p ()
-  (let ((system-separate-separator-alist '((WIN1 . "windows-pc1")
+(ert-deftest system-separate--current-system-separator-p ()
+  (let ((system-separate-system-separator-alist '((WIN1 . "windows-pc1")
                               (MAC1 . "mac-pc1")
                               (win2 . "windows-pc2"))))
     (flet ((system-name () "windows-pc2"))
-      (should (system-separate--current-separator-p 'win2))
-      (should (not (system-separate--current-separator-p 'WIN1))))))
+      (should (system-separate--current-system-separator-p 'win2))
+      (should (not (system-separate--current-system-separator-p 'WIN1))))))
 
 (ert-deftest system-separate-:eval ()
-  (should (system-separate--current-separator-p '(:eval nil t))))
+  (should (system-separate--current-system-separator-p '(:eval nil t))))
 
 
 
 (ert-deftest system-separate-set-no-eval ()
   (let ((var nil)
-        (system-separate-separator-alist
+        (system-separate-system-separator-alist
          '((WIN1 . "windows-pc1")
            (MAC1 . "mac-pc1")
            (win2 . "windows-pc2")
            (all  . (:eval t))
-           (win  . (:separators WIN1 win2))
+           (win  . (:system-separators WIN1 win2))
            (seps . (:alias MAC1 WIN1))
            (ev1  . 5)
            (ev2  . (:emacs-version>= 5 3))
@@ -276,12 +276,12 @@
 
 (ert-deftest system-separate-setq-no-eval ()
   (let ((var nil)
-        (system-separate-separator-alist
+        (system-separate-system-separator-alist
          '((WIN1 . "windows-pc1")
            (MAC1 . "mac-pc1")
            (win2 . "windows-pc2")
            (all  . (:eval t))
-           (win (:separators WIN1 win2))
+           (win (:system-separators WIN1 win2))
            (seps (:alias MAC1 WIN1))
            (ev1 . 5)
            (ev2 . (:emacs-version>= 5 3))
@@ -415,12 +415,12 @@
 
 (ert-deftest system-separate-set ()
   (let ((var nil)
-        (system-separate-separator-alist
+        (system-separate-system-separator-alist
          '((WIN1 . "windows-pc1")
            (MAC1 . "mac-pc1")
            (win2 . "windows-pc2")
            (all  . (:eval t))
-           (win (:separators WIN1 win2))
+           (win (:system-separators WIN1 win2))
            (seps (:alias MAC1 WIN1))
            (ev1 . 5)
            (ev2 . (:emacs-version>= 5 3))
@@ -552,7 +552,7 @@
 
 (ert-deftest system-separate-setq ()
   (let ((var nil)
-        (system-separate-separator-alist '((WIN1 . "windows-pc1")
+        (system-separate-system-separator-alist '((WIN1 . "windows-pc1")
                               (MAC1 . "mac-pc1")
                               (win2 . "windows-pc2"))))
     (flet ((system-name () "windows-pc2"))
@@ -570,7 +570,7 @@
 
 (ert-deftest system-separate-cond ()
   (let ((var nil)
-        (system-separate-separator-alist '(("windows-pc1" . WIN1)
+        (system-separate-system-separator-alist '(("windows-pc1" . WIN1)
                               ("mac-pc1" . MAC1)
                               ("windows-pc2" . 1)
                               ("windows-pc2" . 5)

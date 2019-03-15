@@ -9,7 +9,7 @@
 
 ;; Package-Requires: ((cl-lib "0.6.1") (emacs "24.3") (dash "2.15.0"))
 
-;; Version: 0.0.5
+;; Version: 0.0.6
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@
 ;;   by system name given by "(system-name)".
 ;; * Macros
 ;; ** =system-separate-set (variable alist)=
-;;   - Set value of =VARIABLE= depend on =SEPARATOR= below.
-;;   - Each element of =ALIST= is =(SEPARATOR . VALUE)=,
+;;   - Set value of =VARIABLE= depend on =SYSTEM-SEPARATOR= below.
+;;   - Each element of =ALIST= is =(SYSTEM-SEPARATOR . VALUE)=,
 ;;     and =VARIABLE= is set to =VALUE=
-;;     if =SEPARATOR= is valid.
-;;   - If there are some cons cells whose car (= =SEPARATOR=) is valid,
+;;     if =SYSTEM-SEPARATOR= is valid.
+;;   - If there are some cons cells whose car (= =SYSTEM-SEPARATOR=) is valid,
 ;;     upstream element is used, and rest of them is not evaluated.
-;;   - in the cons cell whose =SEPARATOR= is =default=,
-;;     its =VALUE= is used only when any other =SEPARATOR= isn't valid.
+;;   - in the cons cell whose =SYSTEM-SEPARATOR= is =default=,
+;;     its =VALUE= is used only when any other =SYSTEM-SEPARATOR= isn't valid.
 ;;   - =(system-separate-set 'a ((b . c) ...))= is absolutely same as
 ;;     =(system-separate-setq a ((b . c) ...))=.
 ;; ** =system-separate-setq (variable alist)=
@@ -49,8 +49,8 @@
 ;; ** =system-separate-setq-no-eval (variable alist)=
 ;;   - Same as =system-separate-setq-no-eval=, but =VALUE= are NOT evalueted.
 ;; ** =system-separate-cond (&body clauses)=
-;;   - Similar to =cond=, but use =SEPARATOR= instead of =CANDICATE=.
-;;     If =SEPARATOR= is valid, evaluate =BODY=.
+;;   - Similar to =cond=, but use =SYSTEM-SEPARATOR= instead of =CANDICATE=.
+;;     If =SYSTEM-SEPARATOR= is valid, evaluate =BODY=.
 ;;   - Priority of each clause is same as =system-separate-set=.
 
 ;;; Code:
@@ -65,7 +65,7 @@
   :group 'tools
   :prefix "system-separate-")
 
-(defcustom system-separate-separator-alist '()
+(defcustom system-separate-system-separator-alist '()
   "Relationship of \"number or symbol\", and system-name on separate.
 You can add (system-name . number-or-symbol).
 And you can use the number instead of system-name on separate."
@@ -75,7 +75,7 @@ And you can use the number instead of system-name on separate."
 
 
 (defvar system-separate--function-alist
-  '(((:alias :separators :or) . system-separate--separators)
+  '(((:alias :system-separators :or) . system-separate--system-separators)
     (:and                 . system-separate--and)
     (:system-name         . system-separate--system-name)
     (:emacs-version>=     . system-separate--emacs-version>=)
@@ -101,13 +101,13 @@ If MAJOR.MINOR is same and or higher than variable `emacs-version', return non-n
          (= emacs-major-version major)
          (or (not minor) (>= emacs-minor-version minor))))))
 
-(defun system-separate--separators (args)
-  "Return non-nil if one of ARGS elements is a valid separator."
-  (-any? 'system-separate--current-separator-p args))
+(defun system-separate--system-separators (args)
+  "Return non-nil if one of ARGS elements is a valid system-separator."
+  (-any? 'system-separate--current-system-separator-p args))
 
 (defun system-separate--and (args)
-  "Return non-nil if all of ARGS elements are valid separator."
-  (-all? 'system-separate--current-separator-p args))
+  "Return non-nil if all of ARGS elements are valid system-separator."
+  (-all? 'system-separate--current-system-separator-p args))
 
 (defun system-separate--os (args)
   "Return non-nil if one of ARGS elements is same as `system-type'."
@@ -151,85 +151,85 @@ Each element of ALIST is (FUNC . VALUE)."
 (defvar system-separate--default-alist
   '((stringp . :system-name)
     (numberp . :emacs-version>=))
-  "Use VALUE to car of separator, if (apply KEY separator) return non-nil.
-`listp' and `symbolp' is invalid for key, because these separator are
+  "Use VALUE to car of system-separator, if (apply KEY system-separator) return non-nil.
+`listp' and `symbolp' is invalid for key, because these system-separator are
 trapped before applied this variable to.")
 
-(defun system-separate--separators-p (object)
-  "Return t if OBJECT is separator list."
+(defun system-separate--system-separators-p (object)
+  "Return t if OBJECT is system-separator list."
   (when (listp object)
     (not
      (let ((c (car object)))
        (when (symbolp c)
          (string= ":" (substring (symbol-name c) 0 1)))))))
 
-(defun system-separate--separator-p (object)
-  "Return non-nil if OBJECT is separator."
+(defun system-separate--system-separator-p (object)
+  "Return non-nil if OBJECT is system-separator."
   (or
    (listp object)
    (symbolp object)
    (system-separate--function-assq object system-separate--default-alist)))
 
-(defun system-separate--symbol-separator-instance (symbol-separator)
-  "Return instance of SYMBOL-SEPARATOR in `system-separate-separator-alist'."
-  (cdr (assq symbol-separator system-separate-separator-alist)))
+(defun system-separate--symbol-system-separator-instance (symbol-system-separator)
+  "Return instance of SYMBOL-SYSTEM-SEPARATOR in `system-separate-system-separator-alist'."
+  (cdr (assq symbol-system-separator system-separate-system-separator-alist)))
 
-(defun system-separate--separator-normalize (separator)
-  "Normarize SEPARATOR.
-Change SEPARATOR to be listed one whose car is :foobar."
+(defun system-separate--system-separator-normalize (system-separator)
+  "Normarize SYSTEM-SEPARATOR.
+Change SYSTEM-SEPARATOR to be listed one whose car is :foobar."
   (let ((hidden-kind
-         (system-separate--function-assq separator system-separate--default-alist)))
+         (system-separate--function-assq system-separator system-separate--default-alist)))
     (cond
-     ;; trap separators-list
-     ((system-separate--separators-p separator) (cons ':separators separator))
+     ;; trap system-separators-list
+     ((system-separate--system-separators-p system-separator) (cons ':system-separators system-separator))
      ;; make listed-separaor
-     (hidden-kind (list hidden-kind separator))
-     ;; fall out symbol-separator
-     (t separator))))
+     (hidden-kind (list hidden-kind system-separator))
+     ;; fall out symbol-system-separator
+     (t system-separator))))
 
-(defun system-separate--symbol-separator-current-p (symbol-separator)
-  "Return non-nil if SYMBOL-SEPARATOR is valid separator."
-  (or (system-separate--os (list symbol-separator))
-      (system-separate--current-separator-p
-       (system-separate--symbol-separator-instance symbol-separator))))
+(defun system-separate--symbol-system-separator-current-p (symbol-system-separator)
+  "Return non-nil if SYMBOL-SYSTEM-SEPARATOR is valid system-separator."
+  (or (system-separate--os (list symbol-system-separator))
+      (system-separate--current-system-separator-p
+       (system-separate--symbol-system-separator-instance symbol-system-separator))))
 
-(defun system-separate--current-separator-p (separator)
-  "Return non-nil if SEPARATOR is valid separator."
+(defun system-separate--current-system-separator-p (system-separator)
+  "Return non-nil if SYSTEM-SEPARATOR is valid system-separator."
   (cond
-   ((null separator) nil)
-   ((symbolp separator)
-    (system-separate--symbol-separator-current-p separator))
+   ((null system-separator) nil)
+   ((symbolp system-separator)
+    (system-separate--symbol-system-separator-current-p system-separator))
    (t
-    (setq separator (system-separate--separator-normalize separator))
-    (funcall (system-separate--assq (car separator) system-separate--function-alist)
-             (cdr separator)))))
+    (setq system-separator (system-separate--system-separator-normalize system-separator))
+    (funcall (system-separate--assq (car system-separator) system-separate--function-alist)
+             (cdr system-separator)))))
 
 
 ;;;###autoload
 (defmacro system-separate-set-no-eval (variable alist)
   "Set value of VARIABLE to VALUE each system.
-each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
-if (system-separate-current-separator-p SEPARATOR) return non-nil.
+each element of ALIST is (SYSTEM-SEPARATOR . VALUE), and VARIABLE is set to VALUE
+if (system-separate-current-system-separator-p SYSTEM-SEPARATOR) return non-nil.
 VALUE is NOT evaluated.
 
-\(fn VARIABLE ((SEPARATOR . VALUE)...))"
-  (declare (debug (form (&rest (system-separate-separator-p . [&rest sexp])))))
+\(fn VARIABLE ((SYSTEM-SEPARATOR . VALUE)...))"
+  (declare (debug (form (&rest (system-separate-system-separator-p . [&rest sexp])))))
   (let ((valid-cons (gensym "valid-cons"))
-        (separator (gensym "separator"))
+        (system-separator (gensym "system-separator"))
         (value (gensym "value"))
         (default (gensym "default")))
     ;; throw error if ALIST is NOT both alist and symbol.
     `(let (,valid-cons (,default nil))
        (setq ,valid-cons
              (cl-loop
-              for (,separator . ,value) in ',alist
-              if (eq ,separator 'default)
-              do (setq ,default (cons ,separator ,value))
-              else if (system-separate--current-separator-p ,separator)
-              return (cons ,separator ,value)
+              for (,system-separator . ,value) in ',alist
+              if (eq ,system-separator 'default)
+              do (setq ,default (cons ,system-separator ,value))
+              else if (system-separate--current-system-separator-p ,system-separator)
+              return (cons ,system-separator ,value)
               end
               ;; If never eval "return form", return default
-              ;; which is nil if no "default" separator.
+              ;; which is nil if no "default" system-separator.
               finally return ,default))
        ;; If no valid-cons, return nil because of `when' macro.
        (when ,valid-cons
@@ -239,13 +239,13 @@ VALUE is NOT evaluated.
 ;;;###autoload
 (defmacro system-separate-setq-no-eval (variable alist)
   "Set value of VARIABLE to VALUE each system.
-each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
-if (system-separate-current-separator-p SEPARATOR) return non-nil.
+each element of ALIST is (SYSTEM-SEPARATOR . VALUE), and VARIABLE is set to VALUE
+if (system-separate-current-system-separator-p SYSTEM-SEPARATOR) return non-nil.
 variable have to be non-quoted.
 VALUE is NOT evaluated.
 
-\(fn VARIABLE ((SEPARATOR . VALUE)...))"
-  (declare (debug (symbolp (&rest (system-separate-separator-p . [&rest sexp])))))
+\(fn VARIABLE ((SYSTEM-SEPARATOR . VALUE)...))"
+  (declare (debug (symbolp (&rest (system-separate-system-separator-p . [&rest sexp])))))
   `(system-separate-set-no-eval (quote ,variable) ,alist))
 
 
@@ -253,27 +253,27 @@ VALUE is NOT evaluated.
 ;;;###autoload
 (defmacro system-separate-set (variable alist)
   "Set value of VARIABLE to VALUE each system.
-each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
-if (system-separate-current-separator-p SEPARATOR) return non-nil.
+each element of ALIST is (SYSTEM-SEPARATOR . VALUE), and VARIABLE is set to VALUE
+if (system-separate-current-system-separator-p SYSTEM-SEPARATOR) return non-nil.
 VALUE is evaluated.
 
-\(fn VARIABLE ((SEPARATOR . VALUE)...))"
-  (declare (debug (form (&rest (system-separate-separator-p . [&rest form])))))
+\(fn VARIABLE ((SYSTEM-SEPARATOR . VALUE)...))"
+  (declare (debug (form (&rest (system-separate-system-separator-p . [&rest form])))))
   (let ((valid-cons (gensym "valid-cons"))
-        (separator (gensym "separator"))
+        (system-separator (gensym "system-separator"))
         (value (gensym "value"))
         (default (gensym "default")))
     `(let (,valid-cons (,default nil))
        (setq ,valid-cons
              (cl-loop
-              for (,separator . ,value) in ',alist
-              if (eq ,separator 'default)
-              do (setq ,default (cons ,separator ,value))
-              else if (system-separate--current-separator-p ,separator)
-              return (cons ,separator ,value)
+              for (,system-separator . ,value) in ',alist
+              if (eq ,system-separator 'default)
+              do (setq ,default (cons ,system-separator ,value))
+              else if (system-separate--current-system-separator-p ,system-separator)
+              return (cons ,system-separator ,value)
               end
               ;; If never eval "return form", return default
-              ;; which is nil if no "default" separator.
+              ;; which is nil if no "default" system-separator.
               finally return ,default))
        ;; If no valid-cons, return nil because of `when' macro.
        (when ,valid-cons
@@ -283,23 +283,23 @@ VALUE is evaluated.
 ;;;###autoload
 (defmacro system-separate-setq (variable alist)
   "Set value of VARIABLE to VALUE each system.
-each element of ALIST is (SEPARATOR . VALUE), and VARIABLE is set to VALUE
-if (system-separate-current-separator-p SEPARATOR) return non-nil.
+each element of ALIST is (SYSTEM-SEPARATOR . VALUE), and VARIABLE is set to VALUE
+if (system-separate-current-system-separator-p SYSTEM-SEPARATOR) return non-nil.
 variable have to be non-quoted.
 VALUE is evaluated.
 
-\(fn VARIABLE ((SEPARATOR . VALUE)...))"
-  (declare (debug (symbolp (&rest (system-separate-separator-p . [&rest form])))))
+\(fn VARIABLE ((SYSTEM-SEPARATOR . VALUE)...))"
+  (declare (debug (symbolp (&rest (system-separate-system-separator-p . [&rest form])))))
   `(system-separate-set (quote ,variable) ,alist))
 
 ;;;###autoload
 (defmacro system-separate-cond (&rest clauses)
-  "Eval BODY if SEPARATOR accords current system.
-Each element of CLAUSES looks like (SEPARATOR BODY...).  BODY is evaluate
-if (system-separate-current-separator-p SEPARATOR) return non-nil.
+  "Eval BODY if SYSTEM-SEPARATOR accords current system.
+Each element of CLAUSES looks like (SYSTEM-SEPARATOR BODY...).  BODY is evaluate
+if (system-separate-current-system-separator-p SYSTEM-SEPARATOR) return non-nil.
 
-\(fn (SEPARATOR BODY...)...)"
-  (declare (debug (&rest (system-separate-separator-p [&rest form]))))
+\(fn (SYSTEM-SEPARATOR BODY...)...)"
+  (declare (debug (&rest (system-separate-system-separator-p [&rest form]))))
   (let ((c (gensym)))
     `(let (,c)
        (system-separate-setq-no-eval ,c ,clauses)
