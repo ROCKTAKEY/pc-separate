@@ -1,5 +1,5 @@
 (source gnu)
 (source melpa)
 
-(package-file "system-separate.el")
+(package-file "separate.el")
 (depends-on "dash")
