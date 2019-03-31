@@ -14,9 +14,9 @@ travis:
 	${MAKE} clean
 
 compile:
-	${CASK} exec ${EMACS} -batch -Q -L . -eval "(batch-byte-compile)" system-separate.el
+	${CASK} exec ${EMACS} -batch -Q -L . -eval "(batch-byte-compile)" ${TESTEDFILES}
 
 clean:
-	rm -f separate.elc
+	rm -f ${addsuffix c, ${TESTEDFILES}}
 
 .PHONY: easy-test test travis compile clean
