@@ -1,6 +1,6 @@
-[[https://github.com/ROCKTAKEY/pc-separate][https://img.shields.io/github/tag/ROCKTAKEY/system-separate.svg?style=flat-square]]
+[[https://github.com/ROCKTAKEY/system-separate][https://img.shields.io/github/tag/ROCKTAKEY/system-separate.svg?style=flat-square]]
 [[file:LICENSE][https://img.shields.io/github/license/ROCKTAKEY/system-separate.svg?style=flat-square]]
-[[https://travis-ci.org/ROCKTAKEY/pc-separate/][https://img.shields.io/travis/ROCKTAKEY/system-separate/master.svg?style=flat-square]]
+[[https://travis-ci.org/ROCKTAKEY/system-separate/][https://img.shields.io/travis/ROCKTAKEY/system-separate/master.svg?style=flat-square]]
 * Change action by system environment
   =separate= provide function that help you to separate setting
   by system environment, such as system-name given by =(system-name)=,
