@@ -1,6 +1,6 @@
 EMACS ?= emacs
-TESTINGFILE := system-separate-test.el
-TESTEDFILES := system-separate.el
+TESTINGFILE := separate-test.el
+TESTEDFILES := separate.el
 CASK ?= cask
 
 test:
@@ -17,6 +17,6 @@ compile:
 	${CASK} exec ${EMACS} -batch -Q -L . -eval "(batch-byte-compile)" system-separate.el
 
 clean:
-	rm -f system-separate.elc
+	rm -f separate.elc
 
 .PHONY: easy-test test travis compile clean
