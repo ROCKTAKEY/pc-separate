@@ -1,4 +1,4 @@
-;;; system-separate-test.el --- Test of separate
+;;; separate-test.el --- Test of separate
 
 ;; Copyright (C) 2018  ROCKTAKEY
 
@@ -606,5 +606,5 @@
 ;;          ("windows-pc2" . 3)
 ;;          (win2 . 4)))
 
-(provide 'system-separate-test)
-;;; system-separate-test.el ends here
+(provide 'separate-test)
+;;; separate-test.el ends here

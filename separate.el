@@ -1,4 +1,4 @@
-﻿;;; system-separate.el --- separate setting by pc system -*- lexical-binding: t -*-
+﻿;;; separate.el --- separate setting by pc system -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2018  ROCKTAKEY
 
@@ -305,5 +305,5 @@ if (system-separate-current-system-predicate-p SYSTEM-PREDICATE) return non-nil.
        (system-separate-setq-no-eval ,c ,clauses)
        (eval (cons 'progn ,c)))))
 
-(provide 'system-separate)
-;;; system-separate.el ends here
+(provide 'separate)
+;;; separate.el ends here
