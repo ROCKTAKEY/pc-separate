@@ -26,11 +26,10 @@
 
 (require 'ert)
 (require 'separate)
-(eval-when-compile
-  (require 'cl))
+(require 'noflet)
 
 (ert-deftest separate--system-name ()
-  (flet ((system-name () "windows-pc2"))
+  (noflet ((system-name () "windows-pc2"))
     (should (separate--system-name '("mac1" "windows-pc2" "linux3")))
     (should-not
      (separate--system-name '("mac1" "windows-pc21" "linux3")))    ))
@@ -49,7 +48,7 @@
                                                   (MAC1 . "mac-pc1")
                                                   (win2 . "windows-pc2")
                                                   (linux . "linux3"))))
-    (flet ((system-name () "windows-pc2"))
+    (noflet ((system-name () "windows-pc2"))
       (should     (separate--system-predicates '(Wssx "some" win2)))
       (should-not (separate--system-predicates '(WIN1 linux "some"))))))
 
@@ -98,7 +97,7 @@
                               (win2 . "windows-pc2")
                               (wow  . (:alies WIN1)))))
 
-    (flet ((system-name () "windows-pc2"))
+    (noflet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
       (should (equal "windows-pc1" (separate--symbol-system-predicate-instance 'WIN1)))
@@ -119,7 +118,7 @@
                               (win2 . "windows-pc2")
                               (wow  . (:alias win2)))))
 
-    (flet ((system-name () "windows-pc2"))
+    (noflet ((system-name () "windows-pc2"))
       (should-not (separate--symbol-system-predicate-current-p 'WIN1))
       (should     (separate--symbol-system-predicate-current-p 'win2))
       (should     (separate--symbol-system-predicate-current-p 'wow)))))
@@ -128,7 +127,7 @@
   (let ((separate-system-predicate-alist '((WIN1 . "windows-pc1")
                               (MAC1 . "mac-pc1")
                               (win2 . "windows-pc2"))))
-    (flet ((system-name () "windows-pc2"))
+    (noflet ((system-name () "windows-pc2"))
       (should (separate--current-system-predicate-p 'win2))
       (should (not (separate--current-system-predicate-p 'WIN1))))))
 
@@ -157,7 +156,7 @@
         (emacs-major-version 6)
         (emacs-minor-version 2)
         (system-type 'windows-nt))
-    (flet ((system-name () "windows-pc2"))
+    (noflet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
       (separate-set-no-eval 'var
@@ -294,7 +293,7 @@
         (emacs-major-version 6)
         (emacs-minor-version 2)
         (system-type 'windows-nt))
-    (flet ((system-name () "windows-pc2"))
+    (noflet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
       (separate-setq-no-eval var
@@ -433,7 +432,7 @@
         (emacs-major-version 6)
         (emacs-minor-version 2)
         (system-type 'windows-nt))
-    (flet ((system-name () "windows-pc2"))
+    (noflet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
 
       (separate-set 'var
@@ -555,7 +554,7 @@
         (separate-system-predicate-alist '((WIN1 . "windows-pc1")
                               (MAC1 . "mac-pc1")
                               (win2 . "windows-pc2"))))
-    (flet ((system-name () "windows-pc2"))
+    (noflet ((system-name () "windows-pc2"))
       (should (equal (system-name)"windows-pc2"))
       (separate-setq var
                (("windows-pc2" . 1)
@@ -575,7 +574,7 @@
                               ("windows-pc2" . 1)
                               ("windows-pc2" . 5)
                               ("windows-pc2" . win2))))
-    (flet ((system-name () "windows-pc2")
+    (noflet ((system-name () "windows-pc2")
            (abc (arg) (setq var arg)))
       (should (equal (system-name) "windows-pc2"))
 
