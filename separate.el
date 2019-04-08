@@ -61,10 +61,10 @@
 (require 'dash)
 
 ;; Compatibility for version 25 and less.
+;; `gensym' is defined in cl in the version.
 (eval-when-compile
   (when (version< emacs-version "26")
-    (require 'cl-macs)
-    (defalias 'gensym 'cl-gensym)))
+    (require 'cl)))
 
 (defgroup separate nil
   "separate group."
