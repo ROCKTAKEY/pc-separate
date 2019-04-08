@@ -60,12 +60,6 @@
 
 (require 'dash)
 
-;; Compatibility for version 25 and less.
-;; `gensym' is defined in cl in the version.
-(eval-when-compile
-  (when (version< emacs-version "26")
-    (require 'cl)))
-
 (defgroup separate nil
   "separate group."
   :group 'tools
@@ -220,10 +214,10 @@ VALUE is NOT evaluated.
 
 \(fn VARIABLE ((SYSTEM-PREDICATE . VALUE)...))"
   (declare (debug (form (&rest (separate-system-predicate-p . [&rest sexp])))))
-  (let ((valid-cons (gensym "valid-cons"))
-        (system-predicate (gensym "system-predicate"))
-        (value (gensym "value"))
-        (default (gensym "default")))
+  (let ((valid-cons (cl-gensym "valid-cons"))
+        (system-predicate (cl-gensym "system-predicate"))
+        (value (cl-gensym "value"))
+        (default (cl-gensym "default")))
     ;; throw error if ALIST is NOT both alist and symbol.
     `(let (,valid-cons (,default nil))
        (setq ,valid-cons
@@ -265,10 +259,10 @@ VALUE is evaluated.
 
 \(fn VARIABLE ((SYSTEM-PREDICATE . VALUE)...))"
   (declare (debug (form (&rest (separate-system-predicate-p . [&rest form])))))
-  (let ((valid-cons (gensym "valid-cons"))
-        (system-predicate (gensym "system-predicate"))
-        (value (gensym "value"))
-        (default (gensym "default")))
+  (let ((valid-cons (cl-gensym "valid-cons"))
+        (system-predicate (cl-gensym "system-predicate"))
+        (value (cl-gensym "value"))
+        (default (cl-gensym "default")))
     `(let (,valid-cons (,default nil))
        (setq ,valid-cons
              (cl-loop
@@ -306,7 +300,7 @@ if (separate-current-system-predicate-p SYSTEM-PREDICATE) return non-nil.
 
 \(fn (SYSTEM-PREDICATE BODY...)...)"
   (declare (debug (&rest (separate-system-predicate-p [&rest form]))))
-  (let ((c (gensym)))
+  (let ((c (cl-gensym)))
     `(let (,c)
        (separate-setq-no-eval ,c ,clauses)
        (eval (cons 'progn ,c)))))
