@@ -62,7 +62,7 @@
 
 ;; Compatibility for version 25 and less.
 (eval-when-compile
-  (when (version< emacs-version 26)
+  (when (version< emacs-version "26")
     (require 'cl-macs)
     (defalias 'gensym 'cl-gensym)))
 
